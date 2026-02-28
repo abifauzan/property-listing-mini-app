@@ -1,0 +1,75 @@
+<view class="detail-page">
+  <!-- Loading State -->
+  <view a:if="{{loading}}">
+    <loading-skeleton type="detail" count="{{4}}" />
+  </view>
+
+  <!-- Error State -->
+  <view a:elif="{{error}}">
+    <empty-state
+      message="{{error.message}}"
+      showRetry="{{true}}"
+      onRetry="onRetry"
+    />
+  </view>
+
+  <!-- Property Detail Content -->
+  <view a:elif="{{property}}" class="detail-page__content">
+    <!-- Hero Image -->
+    <image
+      class="detail-page__hero"
+      src="{{property.imageUrl}}"
+      mode="aspectFill"
+    />
+
+    <!-- Info Section -->
+    <view class="detail-page__info">
+      <text class="detail-page__title">{{property.title}}</text>
+      <text class="detail-page__price">{{property.price}}</text>
+    </view>
+
+    <!-- Gallery Carousel -->
+    <view class="detail-page__section" a:if="{{property.images && property.images.length > 0}}">
+      <text class="detail-page__section-title">Gallery</text>
+      <image-carousel images="{{property.images}}" />
+    </view>
+
+    <!-- Description -->
+    <view class="detail-page__section" a:if="{{property.description}}">
+      <text class="detail-page__section-title">Description</text>
+      <text class="detail-page__text">{{property.description}}</text>
+    </view>
+
+    <!-- Facilities -->
+    <view class="detail-page__section" a:if="{{property.facilities && property.facilities.length > 0}}">
+      <text class="detail-page__section-title">Facilities</text>
+      <view class="detail-page__facilities">
+        <view class="detail-page__facility-tag" a:for="{{property.facilities}}" a:key="*this">
+          <text class="detail-page__facility-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Terms -->
+    <view class="detail-page__section" a:if="{{property.terms}}">
+      <text class="detail-page__section-title">Terms</text>
+      <text class="detail-page__text">{{property.terms}}</text>
+    </view>
+
+    <!-- Conditions -->
+    <view class="detail-page__section" a:if="{{property.conditions}}">
+      <text class="detail-page__section-title">Conditions</text>
+      <text class="detail-page__text">{{property.conditions}}</text>
+    </view>
+
+    <!-- Bottom spacer for fixed button -->
+    <view class="detail-page__bottom-spacer"></view>
+  </view>
+
+  <!-- Fixed Book Now Button -->
+  <view class="detail-page__book-bar" a:if="{{property && !loading && !error}}">
+    <view class="detail-page__book-btn" onTap="onBookNow">
+      <text class="detail-page__book-btn-text">Book Now</text>
+    </view>
+  </view>
+</view>

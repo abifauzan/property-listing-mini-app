@@ -1,0 +1,14 @@
+<view class="layout-toggle" onTap="onToggle">
+  <image
+    class="layout-toggle__icon"
+    a:if="{{mode === 'list'}}"
+    src="/assets/images/icon-grid.png"
+    mode="aspectFit"
+  />
+  <image
+    class="layout-toggle__icon"
+    a:if="{{mode === 'grid'}}"
+    src="/assets/images/icon-list.png"
+    mode="aspectFit"
+  />
+</view>

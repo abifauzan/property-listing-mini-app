@@ -1,0 +1,44 @@
+.listing-page {
+  min-height: 100vh;
+  background-color: #F5F5F5;
+}
+
+.listing-page__toolbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 24rpx 24rpx 16rpx;
+  background-color: #FFFFFF;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 16rpx;
+}
+
+.listing-page__search-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.listing-page__content {
+  padding: 24rpx;
+}
+
+/* List View */
+.listing-page__list {
+  padding-top: 16rpx;
+}
+
+/* Grid View */
+.listing-page__grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-top: 16rpx;
+}
+
+.listing-page__grid-item {
+  width: 48%;
+  margin-bottom: 24rpx;
+}

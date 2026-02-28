@@ -1,0 +1,33 @@
+{
+  "pages": [
+    "pages/about/about",
+    "pages/listing/listing",
+    "pages/detail/detail"
+  ],
+  "window": {
+    "defaultTitle": "Property Finder",
+    "titleBarColor": "#FFFFFF",
+    "backgroundColor": "#F5F5F5",
+    "pullRefresh": true,
+    "allowsBounceVertical": "YES"
+  },
+  "tabBar": {
+    "textColor": "#999999",
+    "selectedColor": "#1677FF",
+    "backgroundColor": "#FFFFFF",
+    "items": [
+      {
+        "pagePath": "pages/about/about",
+        "name": "About",
+        "icon": "assets/images/icon-about.png",
+        "activeIcon": "assets/images/icon-about-active.png"
+      },
+      {
+        "pagePath": "pages/listing/listing",
+        "name": "Listings",
+        "icon": "assets/images/icon-listing.png",
+        "activeIcon": "assets/images/icon-listing-active.png"
+      }
+    ]
+  }
+}
