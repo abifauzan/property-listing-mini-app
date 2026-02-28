@@ -1,0 +1,33 @@
+{
+  "data": {
+    "propertyListings": [
+      {
+        "documentId": "x0zzhpyrox8ixdy75e2zpw1m",
+        "Banner": {
+          "url": "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+        },
+        "Title": "My Villa Sample",
+        "Price": "750000",
+        "createdAt": "2025-01-31T08:18:56.778Z"
+      },
+      {
+        "documentId": "fn9yzf1ii9zrdscnn9nw9wk4",
+        "Banner": {
+          "url": "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+        },
+        "Title": "My Villa",
+        "Price": "750000",
+        "createdAt": "2024-12-12T12:39:51.290Z"
+      },
+      {
+        "documentId": "l74mb5x4h2hxdhmrx0hm6nyk",
+        "Banner": {
+          "url": "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987633/pexels_vlad_52729368_8059591_280a9e0982.jpg"
+        },
+        "Title": "Villa Sample",
+        "Price": "500000",
+        "createdAt": "2024-12-12T12:30:50.940Z"
+      }
+    ]
+  }
+}

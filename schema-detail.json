@@ -1,0 +1,36 @@
+{
+  "data": {
+    "propertyListings": [
+      {
+        "Banner": {
+          "url": "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+        },
+        "Title": "My Villa Sample",
+        "documentId": "x0zzhpyrox8ixdy75e2zpw1m",
+        "Description": "Aenean tellus velit, porttitor eget diam vel, pharetra pellentesque ante. Proin egestas ornare ipsum. Morbi aliquam dui et felis placerat, in posuere libero molestie. Vivamus ut arcu nulla. Quisque vulputate neque risus, vitae porttitor neque consectetur vel. Duis in ex sem. Sed rutrum porta scelerisque. Nullam eget turpis sit amet tellus vehicula gravida a in justo. Quisque eget nisl ut ipsum lacinia pulvinar. Ut egestas, tortor vitae volutpat suscipit, magna augue semper nunc, vitae sodales est ipsum at turpis. Aenean quis erat et libero rhoncus sodales. Mauris nunc orci, eleifend ac accumsan id, porta ut magna. Proin at urna finibus, dapibus lacus vel, convallis tortor.",
+        "Images": [
+          {
+            "url": "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+          },
+          {
+            "url": "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987637/pexels_koprivakart_3354648_fe963523cc.jpg"
+          },
+          {
+            "url": "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987636/pexels_avinashpatel_544542_615f33a344.jpg"
+          },
+          {
+            "url": "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987633/pexels_vlad_52729368_8059591_280a9e0982.jpg"
+          }
+        ],
+        "Facilities": [
+          "Kitchen",
+          "Free Park",
+          "Bar"
+        ],
+        "Price": "750000",
+        "Terms": "Donec gravida, quam at volutpat pharetra, elit ante ullamcorper eros, nec dictum leo ex a purus. Donec euismod sem non mauris consectetur, vitae consectetur magna sodales. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec aliquam libero. Praesent et consequat arcu, sit amet ullamcorper nibh. Sed laoreet sodales sollicitudin. Nulla massa ipsum, convallis sed lacus sed, maximus ultricies dolor.",
+        "Conditions": "Vestibulum sit amet vehicula tellus. Etiam sed pharetra risus. Vivamus facilisis laoreet ante eget ultrices. Morbi at varius enim, posuere euismod diam. Praesent congue pretium diam eget sagittis. Sed consequat risus vitae vestibulum sollicitudin. Maecenas blandit, orci eget placerat mattis, nulla massa iaculis elit, quis malesuada arcu lacus vel nulla. Cras et pharetra sem. Curabitur efficitur porta lectus in pellentesque."
+      }
+    ]
+  }
+}
