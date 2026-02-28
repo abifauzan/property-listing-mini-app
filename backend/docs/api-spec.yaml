@@ -1,0 +1,357 @@
+openapi: 3.0.3
+info:
+  title: Property Listing Mini App API
+  description: |
+    A RESTful API for serving property listing data to a mini-program frontend.
+    
+    This API provides endpoints for:
+    - Retrieving property listings with optional search functionality
+    - Getting detailed property information by ID
+    
+    Built with Go using clean architecture principles.
+  version: 1.0.0
+  contact:
+    name: Abi Fauzan
+    email: abifauzan234@gmail.com
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+  - url: https://api.propertylisting.com
+    description: Production server
+
+paths:
+  /api/v1/properties:
+    get:
+      summary: Get property listings
+      description: |
+        Retrieve a list of properties with optional search filtering.
+        
+        The search parameter performs case-insensitive filtering on property titles.
+        If no search parameter is provided, all properties are returned.
+      operationId: getPropertyListings
+      tags:
+        - Properties
+      parameters:
+        - name: search
+          in: query
+          description: Search term to filter properties by title (case-insensitive)
+          required: false
+          schema:
+            type: string
+            example: villa
+      responses:
+        '200':
+          description: Successful retrieval of property listings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyListingResponse'
+              examples:
+                all_properties:
+                  summary: All properties
+                  value:
+                    data:
+                      propertyListings:
+                        - documentId: "x0zzhpyrox8ixdy75e2zpw1m"
+                          Banner:
+                            url: "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+                          Title: "My Villa Sample"
+                          Price: "750000"
+                          createdAt: "2025-01-31T08:18:56.778Z"
+                search_results:
+                  summary: Search results for "villa"
+                  value:
+                    data:
+                      propertyListings:
+                        - documentId: "x0zzhpyrox8ixdy75e2zpw1m"
+                          Banner:
+                            url: "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+                          Title: "My Villa Sample"
+                          Price: "750000"
+                          createdAt: "2025-01-31T08:18:56.778Z"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /api/v1/properties/{id}:
+    get:
+      summary: Get property detail
+      description: |
+        Retrieve detailed information for a specific property by its document ID.
+        
+        Returns complete property information including description, images, facilities,
+        terms, and conditions.
+      operationId: getPropertyDetail
+      tags:
+        - Properties
+      parameters:
+        - name: id
+          in: path
+          description: Property document ID
+          required: true
+          schema:
+            type: string
+            example: "x0zzhpyrox8ixdy75e2zpw1m"
+      responses:
+        '200':
+          description: Successful retrieval of property details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyDetailResponse'
+              example:
+                data:
+                  propertyListings:
+                    - documentId: "x0zzhpyrox8ixdy75e2zpw1m"
+                      Banner:
+                        url: "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+                      Title: "My Villa Sample"
+                      Price: "750000"
+                      createdAt: "2025-01-31T08:18:56.778Z"
+                      Description: "Aenean tellus velit, porttitor eget diam vel, pharetra pellentesque ante. Proin egestas ornare ipsum. Morbi aliquam dui et felis placerat, in posuere libero molestie. Vivamus ut arcu nulla. Quisque vulputate neque risus, vitae porttitor neque consectetur vel. Duis in ex sem. Sed rutrum porta scelerisque. Nullam eget turpis sit amet tellus vehicula gravida a in justo. Quisque eget nisl ut ipsum lacinia pulvinar. Ut egestas, tortor vitae volutpat suscipit, magna augue semper nunc, vitae sodales est ipsum at turpis. Aenean quis erat et libero rhoncus sodales. Mauris nunc orci, eleifend ac accumsan id, porta ut magna. Proin at urna finibus, dapibus lacus vel, convallis tortor."
+                      Images:
+                        - url: "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+                        - url: "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987637/pexels_koprivakart_3354648_fe963523cc.jpg"
+                        - url: "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987636/pexels_avinashpatel_544542_615f33a344.jpg"
+                        - url: "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987633/pexels_vlad_52729368_8059591_280a9e0982.jpg"
+                      Facilities:
+                        - "Kitchen"
+                        - "Free Park"
+                        - "Bar"
+                      Terms: "Donec gravida, quam at volutpat pharetra, elit ante ullamcorper eros, nec dictum leo ex a purus. Donec euismod sem non mauris consectetur, vitae consectetur magna sodales. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nam nec aliquam libero. Praesent et consequat arcu, sit amet ullamcorper nibh. Sed laoreet sodales sollicitudin. Nulla massa ipsum, convallis sed lacus sed, maximus ultricies dolor."
+                      Conditions: "Vestibulum sit amet vehicula tellus. Etiam sed pharetra risus. Vivamus facilisis laoreet ante eget ultrices. Morbi at varius enim, posuere euismod diam. Praesent congue pretium diam eget sagittis. Sed consequat risus vitae vestibulum sollicitudin. Maecenas blandit, orci eget placerat mattis, nulla massa iaculis elit, quis malesuada arcu lacus vel nulla. Cras et pharetra sem. Curabitur efficitur porta lectus in pellentesque."
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+components:
+  schemas:
+    Banner:
+      type: object
+      description: Property banner/thumbnail image
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Image URL
+          example: "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+      required:
+        - url
+
+    Image:
+      type: object
+      description: Property gallery image
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Image URL
+          example: "https://res.cloudinary.com/dzktit9nc/image/upload/v1733987640/pexels_eray_ozdogan_615189320_18785790_736c45bfb0.jpg"
+      required:
+        - url
+
+    PropertyListing:
+      type: object
+      description: Property data for listing views (minimal fields)
+      properties:
+        documentId:
+          type: string
+          description: Unique property identifier
+          example: "x0zzhpyrox8ixdy75e2zpw1m"
+        Banner:
+          $ref: '#/components/schemas/Banner'
+        Title:
+          type: string
+          description: Property title
+          example: "My Villa Sample"
+        Price:
+          type: string
+          description: Property price as string (can be formatted for display)
+          example: "750000"
+        createdAt:
+          type: string
+          format: date-time
+          description: Property creation timestamp
+          example: "2025-01-31T08:18:56.778Z"
+      required:
+        - documentId
+        - Banner
+        - Title
+        - Price
+        - createdAt
+
+    Property:
+      type: object
+      description: Complete property data with all fields
+      properties:
+        documentId:
+          type: string
+          description: Unique property identifier
+          example: "x0zzhpyrox8ixdy75e2zpw1m"
+        Banner:
+          $ref: '#/components/schemas/Banner'
+        Title:
+          type: string
+          description: Property title
+          example: "My Villa Sample"
+        Price:
+          type: string
+          description: Property price as string
+          example: "750000"
+        createdAt:
+          type: string
+          format: date-time
+          description: Property creation timestamp
+          example: "2025-01-31T08:18:56.778Z"
+        Description:
+          type: string
+          description: Detailed property description
+          example: "Aenean tellus velit, porttitor eget diam vel, pharetra pellentesque ante."
+        Images:
+          type: array
+          description: Property gallery images
+          items:
+            $ref: '#/components/schemas/Image'
+        Facilities:
+          type: array
+          description: Available facilities
+          items:
+            type: string
+          example: ["Kitchen", "Free Park", "Bar"]
+        Terms:
+          type: string
+          description: Property terms and conditions
+          example: "Donec gravida, quam at volutpat pharetra, elit ante ullamcorper eros."
+        Conditions:
+          type: string
+          description: Additional conditions
+          example: "Vestibulum sit amet vehicula tellus. Etiam sed pharetra risus."
+      required:
+        - documentId
+        - Banner
+        - Title
+        - Price
+        - createdAt
+        - Description
+        - Images
+        - Facilities
+        - Terms
+        - Conditions
+
+    PropertyListingData:
+      type: object
+      description: Data wrapper for property listings
+      properties:
+        propertyListings:
+          type: array
+          description: Array of property listings
+          items:
+            $ref: '#/components/schemas/PropertyListing'
+      required:
+        - propertyListings
+
+    PropertyDetailData:
+      type: object
+      description: Data wrapper for property details
+      properties:
+        propertyListings:
+          type: array
+          description: Array containing single property detail
+          items:
+            $ref: '#/components/schemas/Property'
+          maxItems: 1
+          minItems: 1
+      required:
+        - propertyListings
+
+    PropertyListingResponse:
+      type: object
+      description: Response envelope for property listings
+      properties:
+        data:
+          $ref: '#/components/schemas/PropertyListingData'
+      required:
+        - data
+
+    PropertyDetailResponse:
+      type: object
+      description: Response envelope for property details
+      properties:
+        data:
+          $ref: '#/components/schemas/PropertyDetailData'
+      required:
+        - data
+
+    ErrorResponse:
+      type: object
+      description: Standard error response format
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Error message
+              example: "Property not found"
+            code:
+              type: string
+              description: Error code (optional)
+              example: "NOT_FOUND"
+          required:
+            - message
+      required:
+        - error
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              message: "Property not found"
+              code: "NOT_FOUND"
+
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              message: "Invalid request parameters"
+              code: "BAD_REQUEST"
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              message: "Internal server error"
+              code: "INTERNAL_ERROR"
+
+  securitySchemes:
+    NoAuth:
+      type: http
+      scheme: basic
+      description: No authentication required for this API
+
+security:
+  - NoAuth: []
+
+tags:
+  - name: Properties
+    description: Property listing and detail operations
