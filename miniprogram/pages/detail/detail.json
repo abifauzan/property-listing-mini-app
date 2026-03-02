@@ -1,8 +1,0 @@
-{
-  "defaultTitle": "Property Detail",
-  "usingComponents": {
-    "image-carousel": "/components/image-carousel/image-carousel",
-    "loading-skeleton": "/components/loading-skeleton/loading-skeleton",
-    "empty-state": "/components/empty-state/empty-state"
-  }
-}

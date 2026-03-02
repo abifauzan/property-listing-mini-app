@@ -1,0 +1,13 @@
+{
+  "defaultTitle": "Property Listing",
+  "titleBarColor": "#1677FF",
+  "pullRefresh": true,
+  "usingComponents": {
+    "search-bar": "/components/search-bar/search-bar",
+    "layout-toggle": "/components/layout-toggle/layout-toggle",
+    "property-card": "/components/property-card/property-card",
+    "property-grid-item": "/components/property-grid-item/property-grid-item",
+    "loading-skeleton": "/components/loading-skeleton/loading-skeleton",
+    "empty-state": "/components/empty-state/empty-state"
+  }
+}

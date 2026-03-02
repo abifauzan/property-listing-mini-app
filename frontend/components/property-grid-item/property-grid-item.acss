@@ -1,0 +1,39 @@
+/* §5.2 Grid Card */
+.property-grid-item {
+  width: 100%;
+  background-color: #FFFFFF;
+  border: 1rpx solid #E5E5E5;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+/* §5.2 More square-ish ~4:3 image */
+.property-grid-item__image {
+  width: 100%;
+  height: 240rpx;
+}
+
+/* §5.2 Text block padding 12 */
+.property-grid-item__content {
+  padding: 20rpx 24rpx 24rpx;
+}
+
+/* §5.2 Title can wrap up to 2 lines */
+.property-grid-item__title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #1A1A1A;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* §0.7 Price under title (grey) */
+.property-grid-item__price {
+  font-size: 24rpx;
+  font-weight: 400;
+  color: #666666;
+  margin-top: 8rpx;
+  display: block;
+}

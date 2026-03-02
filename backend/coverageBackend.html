@@ -1,0 +1,430 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>api: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/abifauzan/property-listing-mini-app/backend/cmd/api/main.go (0.0%)</option>
+				
+				<option value="file1">github.com/abifauzan/property-listing-mini-app/backend/internal/delivery/http/property_handler.go (88.5%)</option>
+				
+				<option value="file2">github.com/abifauzan/property-listing-mini-app/backend/internal/middleware/middleware.go (0.0%)</option>
+				
+				<option value="file3">github.com/abifauzan/property-listing-mini-app/backend/internal/repository/json_repository.go (100.0%)</option>
+				
+				<option value="file4">github.com/abifauzan/property-listing-mini-app/backend/internal/usecase/property_usecase.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "log/slog"
+        "net/http"
+        "os"
+
+        delivery "github.com/abifauzan/property-listing-mini-app/backend/internal/delivery/http"
+        "github.com/abifauzan/property-listing-mini-app/backend/internal/middleware"
+        "github.com/abifauzan/property-listing-mini-app/backend/internal/repository"
+        "github.com/abifauzan/property-listing-mini-app/backend/internal/usecase"
+)
+
+func main() <span class="cov0" title="0">{
+        // Structured logger
+        logger := slog.New(slog.NewJSONHandler(os.Stdout, &amp;slog.HandlerOptions{Level: slog.LevelInfo}))
+        slog.SetDefault(logger)
+
+        // Data file path — configurable via env, defaults to local data directory
+        dataPath := os.Getenv("DATA_PATH")
+        if dataPath == "" </span><span class="cov0" title="0">{
+                dataPath = "data/properties.json"
+        }</span>
+
+        // Repository
+        <span class="cov0" title="0">repo, err := repository.NewJSONPropertyRepository(dataPath)
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("failed to initialize repository", "error", err)
+                os.Exit(1)
+        }</span>
+
+        // Usecase
+        <span class="cov0" title="0">uc := usecase.NewPropertyUsecase(repo)
+
+        // HTTP handler &amp; routes
+        mux := http.NewServeMux()
+        handler := delivery.NewPropertyHandler(uc)
+        handler.RegisterRoutes(mux)
+
+        // Middleware chain: Logger -&gt; CORS -&gt; Router
+        app := middleware.Logger(middleware.CORS(mux))
+
+        // Server
+        port := os.Getenv("PORT")
+        if port == "" </span><span class="cov0" title="0">{
+                port = "8080"
+        }</span>
+
+        <span class="cov0" title="0">slog.Info("server starting", "port", port)
+        if err := http.ListenAndServe(":"+port, app); err != nil </span><span class="cov0" title="0">{
+                slog.Error("server failed", "error", err)
+                os.Exit(1)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package http
+
+import (
+        "encoding/json"
+        "log/slog"
+        "net/http"
+
+        "github.com/abifauzan/property-listing-mini-app/backend/internal/domain"
+)
+
+// PropertyHandler holds HTTP handlers for property endpoints.
+type PropertyHandler struct {
+        usecase domain.PropertyUsecase
+}
+
+// NewPropertyHandler returns a new PropertyHandler.
+func NewPropertyHandler(uc domain.PropertyUsecase) *PropertyHandler <span class="cov8" title="1">{
+        return &amp;PropertyHandler{usecase: uc}
+}</span>
+
+// RegisterRoutes registers the property routes on the given mux.
+func (h *PropertyHandler) RegisterRoutes(mux *http.ServeMux) <span class="cov8" title="1">{
+        mux.HandleFunc("GET /api/v1/properties", h.GetListings)
+        mux.HandleFunc("GET /api/v1/properties/{id}", h.GetDetail)
+}</span>
+
+// GetListings handles GET /api/v1/properties?search={title}
+func (h *PropertyHandler) GetListings(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        search := r.URL.Query().Get("search")
+
+        listings, err := h.usecase.GetListings(r.Context(), search)
+        if err != nil </span><span class="cov8" title="1">{
+                slog.Error("failed to get listings", "error", err)
+                writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "internal server error"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">resp := domain.PropertyListingResponse{
+                Data: domain.PropertyListingData{
+                        PropertyListings: listings,
+                },
+        }
+        writeJSON(w, http.StatusOK, resp)</span>
+}
+
+// GetDetail handles GET /api/v1/properties/{id}
+func (h *PropertyHandler) GetDetail(w http.ResponseWriter, r *http.Request) <span class="cov8" title="1">{
+        id := r.PathValue("id")
+        if id == "" </span><span class="cov0" title="0">{
+                writeJSON(w, http.StatusBadRequest, map[string]string{"error": "missing property id"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">property, err := h.usecase.GetDetail(r.Context(), id)
+        if err != nil </span><span class="cov8" title="1">{
+                slog.Warn("property not found", "id", id, "error", err)
+                writeJSON(w, http.StatusNotFound, map[string]string{"error": "property not found"})
+                return
+        }</span>
+
+        <span class="cov8" title="1">resp := domain.PropertyDetailResponse{
+                Data: domain.PropertyDetailData{
+                        PropertyListings: []domain.Property{*property},
+                },
+        }
+        writeJSON(w, http.StatusOK, resp)</span>
+}
+
+func writeJSON(w http.ResponseWriter, status int, v any) <span class="cov8" title="1">{
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(status)
+        if err := json.NewEncoder(w).Encode(v); err != nil </span><span class="cov0" title="0">{
+                slog.Error("failed to write JSON response", "error", err)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package middleware
+
+import (
+        "log/slog"
+        "net/http"
+        "time"
+)
+
+// CORS adds permissive CORS headers for development.
+func CORS(next http.Handler) http.Handler <span class="cov0" title="0">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                w.Header().Set("Access-Control-Allow-Origin", "*")
+                w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+                w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+                if r.Method == http.MethodOptions </span><span class="cov0" title="0">{
+                        w.WriteHeader(http.StatusNoContent)
+                        return
+                }</span>
+
+                <span class="cov0" title="0">next.ServeHTTP(w, r)</span>
+        })
+}
+
+// Logger logs each request's method, path, status, and duration using slog.
+func Logger(next http.Handler) http.Handler <span class="cov0" title="0">{
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) </span><span class="cov0" title="0">{
+                start := time.Now()
+                rw := &amp;responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
+
+                next.ServeHTTP(rw, r)
+
+                slog.Info("request",
+                        "method", r.Method,
+                        "path", r.URL.Path,
+                        "status", rw.statusCode,
+                        "duration", time.Since(start).String(),
+                )
+        }</span>)
+}
+
+// responseWriter wraps http.ResponseWriter to capture the status code.
+type responseWriter struct {
+        http.ResponseWriter
+        statusCode int
+}
+
+func (rw *responseWriter) WriteHeader(code int) <span class="cov0" title="0">{
+        rw.statusCode = code
+        rw.ResponseWriter.WriteHeader(code)
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package repository
+
+import (
+        "context"
+        "encoding/json"
+        "fmt"
+        "os"
+        "strings"
+        "sync"
+
+        "github.com/abifauzan/property-listing-mini-app/backend/internal/domain"
+)
+
+// JSONPropertyRepository implements domain.PropertyRepository using an in-memory
+// store loaded from a JSON file. It is safe for concurrent reads.
+type JSONPropertyRepository struct {
+        mu         sync.RWMutex
+        properties []domain.Property
+}
+
+// NewJSONPropertyRepository creates a new repository and loads data from the
+// given JSON file path. Returns an error if the file cannot be read or parsed.
+func NewJSONPropertyRepository(filePath string) (*JSONPropertyRepository, error) <span class="cov8" title="1">{
+        data, err := os.ReadFile(filePath)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("reading properties file: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">var properties []domain.Property
+        if err := json.Unmarshal(data, &amp;properties); err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("parsing properties JSON: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">return &amp;JSONPropertyRepository{
+                properties: properties,
+        }, nil</span>
+}
+
+// GetAll returns all properties.
+func (r *JSONPropertyRepository) GetAll(_ context.Context) ([]domain.Property, error) <span class="cov8" title="1">{
+        r.mu.RLock()
+        defer r.mu.RUnlock()
+
+        result := make([]domain.Property, len(r.properties))
+        copy(result, r.properties)
+        return result, nil
+}</span>
+
+// GetByID returns a single property matching the given documentId.
+func (r *JSONPropertyRepository) GetByID(_ context.Context, id string) (*domain.Property, error) <span class="cov8" title="1">{
+        r.mu.RLock()
+        defer r.mu.RUnlock()
+
+        for i := range r.properties </span><span class="cov8" title="1">{
+                if r.properties[i].DocumentID == id </span><span class="cov8" title="1">{
+                        p := r.properties[i]
+                        return &amp;p, nil
+                }</span>
+        }
+        <span class="cov8" title="1">return nil, fmt.Errorf("property with id %q not found", id)</span>
+}
+
+// Search returns properties whose Title contains the query (case-insensitive).
+func (r *JSONPropertyRepository) Search(_ context.Context, query string) ([]domain.Property, error) <span class="cov8" title="1">{
+        r.mu.RLock()
+        defer r.mu.RUnlock()
+
+        lowerQuery := strings.ToLower(query)
+        var result []domain.Property
+        for _, p := range r.properties </span><span class="cov8" title="1">{
+                if strings.Contains(strings.ToLower(p.Title), lowerQuery) </span><span class="cov8" title="1">{
+                        result = append(result, p)
+                }</span>
+        }
+        <span class="cov8" title="1">return result, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package usecase
+
+import (
+        "context"
+        "fmt"
+
+        "github.com/abifauzan/property-listing-mini-app/backend/internal/domain"
+)
+
+// propertyUsecase implements domain.PropertyUsecase.
+type propertyUsecase struct {
+        repo domain.PropertyRepository
+}
+
+// NewPropertyUsecase returns a new PropertyUsecase backed by the given repository.
+func NewPropertyUsecase(repo domain.PropertyRepository) domain.PropertyUsecase <span class="cov8" title="1">{
+        return &amp;propertyUsecase{repo: repo}
+}</span>
+
+// GetListings returns a slice of PropertyListing. If search is non-empty,
+// results are filtered by title (case-insensitive).
+func (u *propertyUsecase) GetListings(ctx context.Context, search string) ([]domain.PropertyListing, error) <span class="cov8" title="1">{
+        var properties []domain.Property
+        var err error
+
+        if search != "" </span><span class="cov8" title="1">{
+                properties, err = u.repo.Search(ctx, search)
+        }</span> else<span class="cov8" title="1"> {
+                properties, err = u.repo.GetAll(ctx)
+        }</span>
+        <span class="cov8" title="1">if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("fetching listings: %w", err)
+        }</span>
+
+        <span class="cov8" title="1">listings := make([]domain.PropertyListing, 0, len(properties))
+        for _, p := range properties </span><span class="cov8" title="1">{
+                listings = append(listings, domain.PropertyListing{
+                        DocumentID: p.DocumentID,
+                        Banner:     p.Banner,
+                        Title:      p.Title,
+                        Price:      p.Price,
+                        CreatedAt:  p.CreatedAt,
+                })
+        }</span>
+        <span class="cov8" title="1">return listings, nil</span>
+}
+
+// GetDetail returns the full property detail for the given id.
+func (u *propertyUsecase) GetDetail(ctx context.Context, id string) (*domain.Property, error) <span class="cov8" title="1">{
+        property, err := u.repo.GetByID(ctx, id)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("fetching property detail: %w", err)
+        }</span>
+        <span class="cov8" title="1">return property, nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
