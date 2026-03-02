@@ -1,0 +1,18 @@
+<view class="search-bar">
+  <view class="search-bar__icon">
+    <image class="search-bar__icon-img" src="/assets/images/icon-search.png" mode="aspectFit" />
+  </view>
+  <input
+    class="search-bar__input"
+    type="text"
+    value="{{value}}"
+    placeholder="{{placeholder}}"
+    placeholderStyle="color: #BBBBBB;"
+    onInput="onInput"
+    onConfirm="onConfirm"
+    confirmType="search"
+  />
+  <view class="search-bar__clear" onTap="onClear" a:if="{{value && value.length > 0}}">
+    <text class="search-bar__clear-text">✕</text>
+  </view>
+</view>

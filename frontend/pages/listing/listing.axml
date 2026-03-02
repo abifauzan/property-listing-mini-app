@@ -1,0 +1,55 @@
+<view class="listing-page">
+  <!-- Search + Toggle Bar -->
+  <view class="listing-page__toolbar">
+    <view class="listing-page__search-wrapper">
+      <search-bar
+        value="{{searchQuery}}"
+        placeholder="Search properties..."
+        onChange="onSearchChange"
+      />
+    </view>
+    <layout-toggle
+      mode="{{viewMode}}"
+      onChange="onLayoutToggle"
+    />
+  </view>
+
+  <!-- Loading State -->
+  <view class="listing-page__content" a:if="{{loading}}">
+    <loading-skeleton type="{{viewMode}}" count="{{3}}" />
+  </view>
+
+  <!-- Error State -->
+  <view class="listing-page__content" a:elif="{{error}}">
+    <empty-state
+      message="{{error.message}}"
+      showRetry="{{true}}"
+      onRetry="onRetry"
+    />
+  </view>
+
+  <!-- Empty State -->
+  <view class="listing-page__content" a:elif="{{isEmpty}}">
+    <empty-state
+      message="{{searchQuery ? 'No properties found for \'' + searchQuery + '\'' : 'No properties available.'}}"
+      showRetry="{{!searchQuery}}"
+      onRetry="onRetry"
+    />
+  </view>
+
+  <!-- List View -->
+  <view class="listing-page__content listing-page__list" a:elif="{{viewMode === 'list'}}">
+    <property-card
+      a:for="{{properties}}"
+      a:key="id"
+      property="{{item}}"
+    />
+  </view>
+
+  <!-- Grid View -->
+  <view class="listing-page__content listing-page__grid" a:elif="{{viewMode === 'grid'}}">
+    <view class="listing-page__grid-item" a:for="{{properties}}" a:key="id">
+      <property-grid-item property="{{item}}" />
+    </view>
+  </view>
+</view>

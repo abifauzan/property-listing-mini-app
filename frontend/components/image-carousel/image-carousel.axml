@@ -1,0 +1,22 @@
+<view class="image-carousel" a:if="{{images && images.length > 0}}">
+  <swiper
+    class="image-carousel__swiper"
+    indicator-dots="{{false}}"
+    autoplay="{{false}}"
+    circular="{{true}}"
+    onChange="onChange"
+  >
+    <swiper-item a:for="{{images}}" a:key="{{index}}">
+      <image
+        class="image-carousel__image"
+        src="{{item}}"
+        mode="aspectFill"
+        data-index="{{index}}"
+        onTap="onPreviewImage"
+      />
+    </swiper-item>
+  </swiper>
+  <view class="image-carousel__indicator">
+    <text class="image-carousel__indicator-text">{{currentIndex + 1}} / {{images.length}}</text>
+  </view>
+</view>
