@@ -27,6 +27,15 @@ Page({
       });
       return;
     }
+
+    // Reset view state so skeleton renders immediately while fetching
+    this.setData({
+      property: null,
+      heroImageUrl: '',
+      loading: true,
+      error: null,
+    });
+
     this._setupNetworkMonitoring();
     this._fetchPropertyDetail();
   },
@@ -50,13 +59,21 @@ Page({
   },
 
   onRetry: function () {
-    this.setData({ error: null, loading: true });
+    this.setData({
+      property: null,
+      heroImageUrl: '',
+      error: null,
+      loading: true,
+    });
     this._fetchPropertyDetail();
   },
 
   _fetchPropertyDetail: function () {
     var self = this;
-    this.setData({ loading: true, error: null });
+    this.setData({
+      loading: true,
+      error: null,
+    });
 
     propertyService.getPropertyById(this._propertyId).then(function (property) {
       my.setNavigationBar({ title: property.title });
