@@ -1,10 +1,12 @@
 <view class="property-card" onTap="onTapCard">
-  <image
-    class="property-card__image"
-    src="{{property.imageUrl}}"
-    mode="aspectFill"
-    lazy-load="{{true}}"
-  />
+  <view class="property-card__image-container">
+    <image
+      class="property-card__image"
+      src="{{property.imageUrl}}"
+      mode="aspectFill"
+      lazy-load="{{true}}"
+    />
+  </view>
   <view class="property-card__content">
     <text class="property-card__title">{{property.title}}</text>
     <text class="property-card__price">{{property.price}}</text>

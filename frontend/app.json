@@ -19,14 +19,14 @@
       {
         "pagePath": "pages/about/about",
         "name": "About",
-        "icon": "assets/images/icon-about.png",
-        "activeIcon": "assets/images/icon-about-active.png"
+        "icon": "assets/images/icon-home.png",
+        "activeIcon": "assets/images/icon-home.png"
       },
       {
         "pagePath": "pages/listing/listing",
         "name": "Listings",
         "icon": "assets/images/icon-listing.png",
-        "activeIcon": "assets/images/icon-listing-active.png"
+        "activeIcon": "assets/images/icon-listing.png"
       }
     ]
   }

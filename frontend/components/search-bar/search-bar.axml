@@ -1,7 +1,4 @@
 <view class="search-bar">
-  <view class="search-bar__icon">
-    <image class="search-bar__icon-img" src="/assets/images/icon-search.png" mode="aspectFit" />
-  </view>
   <input
     class="search-bar__input"
     type="text"

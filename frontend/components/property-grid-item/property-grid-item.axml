@@ -1,10 +1,12 @@
 <view class="property-grid-item" onTap="onTapCard">
-  <image
-    class="property-grid-item__image"
-    src="{{property.imageUrl}}"
-    mode="aspectFill"
-    lazy-load="{{true}}"
-  />
+  <view class="property-grid-item__image-container">
+    <image
+      class="property-grid-item__image"
+      src="{{property.imageUrl}}"
+      mode="aspectFill"
+      lazy-load="{{true}}"
+    />
+  </view>
   <view class="property-grid-item__content">
     <text class="property-grid-item__title">{{property.title}}</text>
     <text class="property-grid-item__price">{{property.price}}</text>

@@ -7,14 +7,8 @@
     />
 
     <view class="about-page__text-block">
-      <text class="about-page__title">About Property Finder</text>
-
       <text class="about-page__description">
-        Property Finder is your ultimate companion for discovering the perfect property. Whether you're looking for a cozy villa, a modern apartment, or a luxurious estate, our platform helps you explore a wide range of properties with ease.
-      </text>
-
-      <text class="about-page__description">
-        Browse through detailed listings, view high-quality photos, and find all the information you need to make the right choice. Our intuitive search and filter features make it simple to narrow down your options and find exactly what you're looking for.
+        Property Finder is a simple app that allows you to search for properties in your area. It is built using Mini Program Studio.
       </text>
     </view>
   </view>
