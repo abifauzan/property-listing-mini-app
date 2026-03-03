@@ -1,53 +1,6 @@
-# DANA Mini Program Property Listing
+# Property Listing Mini App — DANA Technical Assessment
 
-A property listing mini application built using the DANA Mini Program framework.
-
-## Project Structure
-
-```
-property-listing-mini-app/
-├── backend/                 # Go backend API
-├── frontend/               # DANA Mini Program frontend
-├── docs/                   # Documentation
-└── README.md              # This file
-```
-
-## Git Branching Strategy
-
-This project follows a structured git branching workflow. See [Git Branching Rules](docs/git-branching-rules.md) for detailed guidelines.
-
-### Current Branches
-- **Release**: `release/2026_Mar_dana_mini_app`
-- **Feature**: `feature/DANA-003-frontend-implementation`
-
-## Getting Started
-
-### Backend Setup
-```bash
-cd backend
-go mod download
-go run cmd/api/main.go
-```
-
-### Frontend Setup
-```bash
-cd frontend
-# Follow DANA Mini Program IDE setup instructions
-```
-
-## Documentation
-
-- [API Documentation](backend/docs/api-spec.yaml)
-- [Git Branching Rules](docs/git-branching-rules.md)
-
-## Requirements
-
-- DANA Mini Program Framework
-- Go 1.21+
-- DANA Mini Program IDE
-# Property Listing Application — Full Stack Monorepo
-
-A full-stack property listing application with a **Go backend API** and **React Native mobile frontend**.
+A full-stack property listing application built with **Go backend** and **DANA Mini Program frontend**, demonstrating clean architecture, modern UI/UX, and scalable design patterns.
 
 ---
 
@@ -58,21 +11,21 @@ property-listing-mini-app/
 ├── backend/                    # Go REST API
 │   ├── cmd/api/               # Application entry point
 │   ├── internal/              # Clean architecture layers
-│   │   ├── domain/           # Business entities
-│   │   ├── repository/       # Data access layer
+│   │   ├── domain/           # Business entities & interfaces
+│   │   ├── repository/       # Data access layer (JSON)
 │   │   ├── usecase/          # Business logic
-│   │   ├── delivery/         # HTTP handlers
-│   │   └── middleware/       # CORS, logging
+│   │   ├── delivery/http/    # HTTP handlers & routing
+│   │   └── middleware/       # CORS & logging
 │   ├── data/                 # JSON data source
-│   └── docs/                 # API spec (OpenAPI)
-├── mobile/                    # React Native (Expo) app
-│   ├── app/                  # Expo Router screens
+│   └── docs/                 # API specification (OpenAPI 3.0)
+├── frontend/                  # DANA Mini Program
+│   ├── pages/                # Screens (about, listing, detail)
 │   ├── components/           # Reusable UI components
-│   ├── hooks/                # React Query hooks
-│   ├── services/             # API client
-│   ├── types/                # TypeScript types
-│   └── utils/                # Utilities
-└── miniprogram/              # DANA Mini Program (legacy)
+│   ├── api/                  # API client layer
+│   ├── services/             # Business logic services
+│   ├── utils/                # Helper functions
+│   └── assets/               # Images and static files
+└── data/                     # JSON schemas (reference)
 ```
 
 ---
@@ -81,9 +34,9 @@ property-listing-mini-app/
 
 ### Prerequisites
 
-- **Node.js** 18.x or higher
-- **Go** 1.21 or higher
-- **Expo Go** app (for mobile testing)
+- **Go** 1.25+ (backend)
+- **DANA Mini Program IDE** (frontend)
+- **Node.js** 18+ (optional, for tooling)
 
 ### 1. Start the Backend API
 
@@ -92,20 +45,14 @@ cd backend
 go run cmd/api/main.go
 ```
 
-The API will be available at `http://localhost:8080/api/v1`
+The API will be available at **`http://localhost:8080/api/v1`**
 
-### 2. Start the Mobile App
+### 2. Open the Mini Program
 
-```bash
-cd mobile
-npm install
-npm start
-```
-
-Then:
-- Press `i` for iOS Simulator
-- Press `a` for Android Emulator
-- Scan QR code with Expo Go for physical device
+1. Open **DANA Mini Program IDE**
+2. Import the `frontend/` directory as a project
+3. Click **Run** to start the simulator
+4. The app will connect to the backend automatically
 
 ---
 
@@ -113,47 +60,52 @@ Then:
 
 ### Backend (Go)
 
-**Clean Architecture** with dependency injection:
+**Clean Architecture** with strict layer separation:
 
 ```
 HTTP Request
     ↓
-Delivery Layer (handlers)
+Middleware (CORS, Logging)
+    ↓
+Delivery Layer (HTTP handlers)
     ↓
 Use Case Layer (business logic)
     ↓
 Repository Layer (data access)
     ↓
-Domain Layer (entities)
+Domain Layer (entities & interfaces)
 ```
 
-**Key Features**:
-- RESTful API design
-- CORS enabled
-- JSON file-based data source
-- Structured error handling
-- Comprehensive logging
+**Key Principles**:
+- Dependency injection for testability
+- Interface-based design
+- Single responsibility per layer
+- Repository pattern for data abstraction
+- Structured logging (JSON)
 
-### Frontend (React Native)
+### Frontend (DANA Mini Program)
 
-**Modern React Native** with Expo Router:
+**Component-based architecture** following mini-program conventions:
 
 ```
-UI Components
+Pages (AXML + JS + ACSS)
     ↓
-React Query Hooks
+Components (reusable UI)
     ↓
-API Services (Axios)
+Services (business logic)
+    ↓
+API Client (HTTP layer)
     ↓
 Backend API
 ```
 
 **Key Features**:
-- File-based routing (Expo Router)
-- TailwindCSS styling (NativeWind)
-- Automatic caching (TanStack Query)
-- Type-safe API layer
-- Animated UI components
+- AXML templating (mini-program markup)
+- ACSS styling (mini-program CSS)
+- Component lifecycle management
+- State management with `setData()`
+- Pull-to-refresh support
+- Loading & empty states
 
 ---
 
@@ -161,7 +113,7 @@ Backend API
 
 | Endpoint | Method | Query Params | Description |
 |----------|--------|--------------|-------------|
-| `/api/v1/properties` | GET | `?search={query}` | Get all properties (with optional search) |
+| `/api/v1/properties` | GET | `?search={query}` | List properties (with optional search) |
 | `/api/v1/properties/{id}` | GET | — | Get property detail by ID |
 
 ### Example Requests
@@ -170,38 +122,56 @@ Backend API
 # Get all properties
 curl http://localhost:8080/api/v1/properties
 
-# Search properties
+# Search properties by title
 curl http://localhost:8080/api/v1/properties?search=villa
 
 # Get property detail
 curl http://localhost:8080/api/v1/properties/x0zzhpyrox8ixdy75e2zpw1m
 ```
 
+**Response Format**:
+```json
+{
+  "data": {
+    "propertyListings": [
+      {
+        "documentId": "x0zzhpyrox8ixdy75e2zpw1m",
+        "Banner": { "url": "https://..." },
+        "Title": "My Villa Sample",
+        "Price": "750000",
+        "createdAt": "2025-01-31T08:18:56.778Z"
+      }
+    ]
+  }
+}
+```
+
 ---
 
 ## 🎯 Features
 
-### Mobile App Features
+### ✅ Frontend Features (DANA Mini Program)
 
-- ✅ **About Screen** — App information and features
-- ✅ **Property Listing** — Browse all properties
-- ✅ **Search** — Real-time search with debounce
-- ✅ **Layout Toggle** — Switch between list and grid views
-- ✅ **Property Detail** — Full property information
-- ✅ **Image Gallery** — Carousel with pagination
-- ✅ **Pull-to-Refresh** — Reload property data
-- ✅ **Loading States** — Animated skeletons
-- ✅ **Empty States** — User-friendly messages
-- ✅ **Book Now** — Demo booking action
+- **About Screen** — Static information page with app description
+- **Property Listing** — Browse all properties with search
+- **Search Bar** — Real-time filtering by property title
+- **Layout Toggle** — Switch between vertical list and grid view
+- **Property Detail** — Full property information with image carousel
+- **Image Gallery** — Swipeable carousel with pagination dots
+- **Pull-to-Refresh** — Reload property data
+- **Loading States** — Skeleton screens during data fetch
+- **Empty States** — User-friendly messages for no results
+- **Book Now** — Demo booking action (shows toast)
 
-### Backend Features
+### ✅ Backend Features (Go API)
 
-- ✅ **RESTful API** — Standard HTTP methods
-- ✅ **Search Functionality** — Case-insensitive title search
-- ✅ **CORS Support** — Cross-origin requests enabled
-- ✅ **Error Handling** — Structured error responses
-- ✅ **Logging** — Request/response logging
-- ✅ **Clean Architecture** — Maintainable codebase
+- **RESTful API** — Standard HTTP methods
+- **Search Functionality** — Case-insensitive title search
+- **CORS Support** — Cross-origin requests enabled
+- **Error Handling** — Structured error responses
+- **Structured Logging** — JSON logs with request/response details
+- **Clean Architecture** — Testable, maintainable codebase
+- **Unit Tests** — Repository and use case tests included
 
 ---
 
@@ -209,83 +179,88 @@ curl http://localhost:8080/api/v1/properties/x0zzhpyrox8ixdy75e2zpw1m
 
 ### Backend
 
+| Component | Technology | Version |
+|-----------|-----------|---------|
+| Language | Go | 1.25.0 |
+| HTTP Framework | `net/http` (stdlib) | — |
+| Architecture | Clean Architecture | — |
+| Data Source | JSON file | — |
+| Logging | `log/slog` (stdlib) | — |
+| API Spec | OpenAPI 3.0 | — |
+
+### Frontend
+
 | Component | Technology |
 |-----------|-----------|
-| Language | Go 1.21+ |
-| Framework | Standard library (net/http) |
-| Architecture | Clean Architecture |
-| Data Source | JSON file |
-| API Spec | OpenAPI 3.0 |
-
-### Mobile
-
-| Component | Technology |
-|-----------|-----------|
-| Framework | Expo SDK 55 |
-| Language | TypeScript (strict) |
-| Navigation | Expo Router v4 |
-| Styling | NativeWind v4 |
-| Data Fetching | TanStack Query v5 |
-| HTTP Client | Axios |
-| Icons | @expo/vector-icons |
-
----
-
-## 📱 Screenshots
-
-*(Add screenshots after running the app)*
-
-### Mobile App Screens
-1. About Screen
-2. Property Listing (List View)
-3. Property Listing (Grid View)
-4. Property Detail
-5. Image Gallery Carousel
+| Framework | DANA Mini Program |
+| Markup | AXML (Ant XML) |
+| Styling | ACSS (Ant CSS) |
+| Scripting | JavaScript (ES6+) |
+| HTTP Client | `my.request` (mini-program API) |
+| Components | Custom components |
 
 ---
 
 ## 🧪 Testing
 
-### Backend Testing
+### Backend Tests
 
 ```bash
 cd backend
-go test ./...
+go test ./... -v
 ```
 
-### Mobile Testing
+**Test Coverage**:
+- Repository layer tests (JSON data access)
+- Use case layer tests (business logic)
+- Mock-based testing with interfaces
 
-Manual testing checklist in `mobile/README.md`
+### Frontend Testing
+
+Manual testing checklist:
+- ✅ About page displays correctly
+- ✅ Listing page loads properties
+- ✅ Search filters properties by title
+- ✅ Layout toggle switches views
+- ✅ Detail page shows full property info
+- ✅ Image carousel swipes correctly
+- ✅ Pull-to-refresh reloads data
+- ✅ Loading states appear during fetch
+- ✅ Empty state shows when no results
+- ✅ Book Now shows confirmation toast
 
 ---
 
 ## 📚 Documentation
 
-- **Backend API Spec**: `backend/docs/api-spec.yaml` (OpenAPI 3.0)
-- **Backend README**: `backend/README.md`
-- **Mobile README**: `mobile/README.md`
-- **Mobile Summary**: `mobile/PROJECT_SUMMARY.md`
+- **Backend README**: [`backend/README.md`](backend/README.md)
+- **API Documentation**: [`backend/docs/README.md`](backend/docs/README.md)
+- **API Spec (OpenAPI)**: [`backend/docs/api-spec.yaml`](backend/docs/api-spec.yaml)
+- **Frontend README**: [`frontend/README.md`](frontend/README.md) *(if created)*
 
 ---
 
 ## 🔧 Configuration
 
-### Backend Port
+### Backend Environment Variables
 
-Default: `8080`
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `8080` | Server listen port |
+| `DATA_PATH` | `data/properties.json` | Path to JSON data file |
 
-To change, update `backend/cmd/api/main.go`:
+### Frontend API Configuration
 
-```go
-port := ":8080"  // Change this
+Update `frontend/api/config.js` to change the backend URL:
+
+```javascript
+const API_BASE_URL = 'http://localhost:8080';
 ```
 
-### Mobile API URL
+For physical device testing, use your computer's IP address:
 
-For physical device testing, update `mobile/utils/constants.ts`:
-
-```typescript
-export const API_BASE_URL = 'http://YOUR_COMPUTER_IP:8080';
+```javascript
+const API_BASE_URL = 'http://192.168.1.100:8080';
 ```
 
 ---
@@ -294,21 +269,19 @@ export const API_BASE_URL = 'http://YOUR_COMPUTER_IP:8080';
 
 ### Backend
 
+Build and run the binary:
+
 ```bash
 cd backend
 go build -o property-api cmd/api/main.go
 ./property-api
 ```
 
-### Mobile
+Or deploy to a cloud provider (e.g., Google Cloud Run, AWS Lambda, Heroku).
 
-```bash
-cd mobile
-npx eas build --platform ios
-npx eas build --platform android
-```
+### Frontend
 
-*(Requires Expo account and EAS CLI setup)*
+Package the mini-program and submit to the DANA Mini Program platform following their deployment guidelines.
 
 ---
 
@@ -319,18 +292,17 @@ npx eas build --platform android
    cd backend && go run cmd/api/main.go
    ```
 
-2. **Start Mobile**:
-   ```bash
-   cd mobile && npm start
-   ```
+2. **Open Mini Program IDE**:
+   - Import `frontend/` directory
+   - Click **Run** to start simulator
 
 3. **Make Changes**:
    - Backend: Edit files in `internal/`
-   - Mobile: Edit files in `app/`, `components/`, etc.
+   - Frontend: Edit files in `pages/`, `components/`
 
 4. **Test**:
    - Backend: `go test ./...`
-   - Mobile: Manual testing via Expo Go
+   - Frontend: Manual testing in simulator
 
 ---
 
@@ -338,71 +310,73 @@ npx eas build --platform android
 
 ### Why Go for Backend?
 
-- Fast compilation and execution
-- Strong standard library
-- Excellent for REST APIs
-- Clean architecture support
-- Type safety
+- **Performance**: Fast compilation and execution
+- **Simplicity**: Strong standard library, minimal dependencies
+- **Scalability**: Excellent concurrency support
+- **Type Safety**: Compile-time error checking
+- **Clean Architecture**: Natural fit for layered design
 
-### Why Expo for Mobile?
+### Why DANA Mini Program?
 
-- Fast development iteration
-- OTA updates
-- Cross-platform (iOS + Android)
-- Modern routing (Expo Router)
-- Rich ecosystem
+- **Requirement**: Specified in the technical assessment
+- **Ecosystem**: Integrated with DANA platform
+- **Performance**: Lightweight and fast
+- **User Base**: Direct access to DANA users
 
 ### Why Clean Architecture?
 
-- Separation of concerns
-- Testability
-- Maintainability
-- Scalability
-- Technology independence
+- **Testability**: Each layer can be tested independently
+- **Maintainability**: Clear separation of concerns
+- **Scalability**: Easy to add new features
+- **Flexibility**: Can swap data sources without changing business logic
 
 ---
 
 ## 🔄 Future Enhancements
 
 ### Backend
-- [ ] Database integration (PostgreSQL)
-- [ ] Authentication & authorization
-- [ ] Pagination support
-- [ ] Filtering by price, facilities
+- [ ] Database integration (PostgreSQL/MongoDB)
+- [ ] Authentication & authorization (JWT)
+- [ ] Pagination for large datasets
+- [ ] Advanced filtering (price range, facilities)
 - [ ] Image upload service
-- [ ] Unit tests & integration tests
+- [ ] Rate limiting
+- [ ] API versioning
 
-### Mobile
-- [ ] Favorites functionality
-- [ ] Advanced filtering
-- [ ] Map view
+### Frontend
+- [ ] Favorites/wishlist functionality
+- [ ] Advanced filters (price, location, facilities)
+- [ ] Map view integration
 - [ ] User authentication
 - [ ] Booking history
 - [ ] Push notifications
-- [ ] Offline mode
+- [ ] Offline mode with local storage
 
 ---
 
 ## 🐛 Troubleshooting
 
-### "Connection refused" on mobile
+### Backend Issues
 
-- Ensure backend is running
-- For physical devices, use computer's IP instead of `localhost`
-- Check firewall settings
-
-### TypeScript errors in mobile
-
-```bash
-cd mobile
-npm install
-```
-
-### Backend port already in use
-
+**Port already in use:**
 ```bash
 lsof -ti:8080 | xargs kill -9
 ```
+
+**Data file not found:**
+Ensure `backend/data/properties.json` exists or set `DATA_PATH` environment variable.
+
+### Frontend Issues
+
+**Cannot connect to backend:**
+- Ensure backend is running on `http://localhost:8080`
+- For physical devices, update API URL to your computer's IP
+- Check firewall settings
+
+**Mini Program IDE errors:**
+- Ensure you're using the latest DANA Mini Program IDE
+- Clear cache and restart IDE
+- Check `app.json` for configuration errors
 
 ---
 
@@ -415,17 +389,17 @@ MIT
 ## 👤 Author
 
 **Abi Fauzan**  
-Email: abifauzan234@gmail.com
+Email: abifauzan234@gmail.com  
+GitHub: [@abifauzan](https://github.com/abifauzan)
 
 ---
 
 ## 🙏 Acknowledgments
 
-Built as part of the DANA technical assessment.
+Built as part of the **DANA Technical Assessment** for the Property Listing Mini App challenge.
 
-**Tech Stack**:
-- Go standard library
-- Expo & React Native
-- TanStack Query
-- NativeWind
-- Axios
+**Technologies Used**:
+- Go standard library (`net/http`, `log/slog`)
+- DANA Mini Program Framework
+- Clean Architecture principles
+- RESTful API design patterns
