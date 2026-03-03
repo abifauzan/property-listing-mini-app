@@ -1,0 +1,6 @@
+<view class="offline-banner" a:if="{{isOffline}}">
+  <view class="offline-banner__content flex flex-row items-center">
+    <text class="offline-banner__icon">⚠️</text>
+    <text class="offline-banner__text">{{message}}</text>
+  </view>
+</view>

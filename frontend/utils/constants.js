@@ -16,9 +16,14 @@ module.exports = {
 
   ERROR_MESSAGES: {
     NETWORK: 'Unable to connect. Please check your connection.',
+    NO_INTERNET: 'No internet connection. Please check your network settings.',
+    SLOW_CONNECTION: 'Slow connection detected. This may take a while...',
+    TIMEOUT: 'Request timed out. Please try again.',
     NOT_FOUND: 'Property not found.',
     SERVER: 'Something went wrong. Please try again.',
+    INVALID_DATA: 'Invalid data received from server.',
     EMPTY_SEARCH: 'No properties found for your search.',
     EMPTY_LIST: 'No properties available.',
+    STORAGE_FULL: 'Device storage is full. Some features may not work.',
   },
 };

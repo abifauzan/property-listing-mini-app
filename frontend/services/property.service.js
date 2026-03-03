@@ -101,21 +101,62 @@ var propertyService = {
   },
 
   /**
+   * Validate if a property item has required fields.
+   * @param {Object} item - Property item to validate
+   * @returns {boolean}
+   */
+  _isValidProperty: function (item) {
+    if (!item || typeof item !== 'object') {
+      return false;
+    }
+    
+    var hasId = item.documentId && typeof item.documentId === 'string';
+    var hasTitle = item.Title && typeof item.Title === 'string' && item.Title.trim() !== '';
+    var hasPrice = (typeof item.Price === 'number' || typeof item.Price === 'string') && 
+                   !isNaN(parseFloat(item.Price)) && 
+                   parseFloat(item.Price) >= 0;
+    
+    return hasId && hasTitle && hasPrice;
+  },
+
+  /**
    * Format listing items for display.
    * @param {Array} listings - Raw property listing array
    * @returns {Array} Formatted listings
    */
   _formatListings: function (listings) {
-    return listings.map(function (item) {
-      return {
-        id: item.documentId,
-        title: item.Title || '',
-        price: formatUtil.formatPrice(item.Price),
-        rawPrice: item.Price,
-        imageUrl: (item.Banner && item.Banner.url) || '',
-        createdAt: formatUtil.formatDate(item.createdAt),
-      };
-    });
+    if (!Array.isArray(listings)) {
+      console.warn('[PropertyService] Invalid listings array:', listings);
+      return [];
+    }
+
+    return listings
+      .filter(function (item) {
+        var isValid = propertyService._isValidProperty(item);
+        if (!isValid) {
+          console.warn('[PropertyService] Skipping invalid property:', item);
+        }
+        return isValid;
+      })
+      .map(function (item) {
+        try {
+          var numericPrice = typeof item.Price === 'string' ? parseFloat(item.Price) : item.Price;
+          return {
+            id: item.documentId,
+            title: item.Title || '',
+            price: formatUtil.formatPrice(numericPrice),
+            rawPrice: numericPrice,
+            imageUrl: (item.Banner && item.Banner.url) || '',
+            createdAt: formatUtil.formatDate(item.createdAt),
+          };
+        } catch (err) {
+          console.error('[PropertyService] Error formatting property:', err, item);
+          return null;
+        }
+      })
+      .filter(function (item) {
+        return item !== null;
+      });
   },
 
   /**
@@ -124,26 +165,46 @@ var propertyService = {
    * @returns {Object} Formatted property detail
    */
   _formatDetail: function (item) {
-    var images = [];
-    if (item.Images && item.Images.length > 0) {
-      images = item.Images.map(function (img) {
-        return img.url || '';
-      });
+    if (!propertyService._isValidProperty(item)) {
+      throw new Error('Invalid property data');
     }
 
-    return {
-      id: item.documentId,
-      title: item.Title || '',
-      price: formatUtil.formatPrice(item.Price),
-      rawPrice: item.Price,
-      imageUrl: (item.Banner && item.Banner.url) || '',
-      description: item.Description || '',
-      images: images,
-      facilities: item.Facilities || [],
-      terms: item.Terms || '',
-      conditions: item.Conditions || '',
-      createdAt: formatUtil.formatDate(item.createdAt),
-    };
+    try {
+      var images = [];
+      if (Array.isArray(item.Images) && item.Images.length > 0) {
+        images = item.Images
+          .filter(function (img) {
+            return img && img.url && typeof img.url === 'string';
+          })
+          .map(function (img) {
+            return img.url;
+          });
+      }
+
+      var facilities = [];
+      if (Array.isArray(item.Facilities)) {
+        facilities = item.Facilities.filter(function (f) {
+          return f && typeof f === 'string' && f.trim() !== '';
+        });
+      }
+
+      return {
+        id: item.documentId,
+        title: item.Title || '',
+        price: formatUtil.formatPrice(item.Price),
+        rawPrice: item.Price,
+        imageUrl: (item.Banner && item.Banner.url) || '',
+        description: item.Description || '',
+        images: images,
+        facilities: facilities,
+        terms: item.Terms || '',
+        conditions: item.Conditions || '',
+        createdAt: formatUtil.formatDate(item.createdAt),
+      };
+    } catch (err) {
+      console.error('[PropertyService] Error formatting property detail:', err);
+      throw err;
+    }
   },
 };
 

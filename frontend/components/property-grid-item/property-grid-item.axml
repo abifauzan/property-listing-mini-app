@@ -2,9 +2,10 @@
   <view class="property-grid-item__image-container">
     <image
       class="property-grid-item__image"
-      src="{{property.imageUrl}}"
+      src="{{imageUrl}}"
       mode="aspectFill"
       lazy-load="{{true}}"
+      onError="onImageError"
     />
   </view>
   <view class="property-grid-item__content flex flex-col flex-1">

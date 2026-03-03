@@ -15,6 +15,7 @@
         mode="aspectFill"
         data-index="{{index}}"
         onTap="onPreviewImage"
+        onError="onImageError"
       />
     </swiper-item>
   </swiper>

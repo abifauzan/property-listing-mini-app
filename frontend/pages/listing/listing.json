@@ -8,6 +8,7 @@
     "property-card": "/components/property-card/property-card",
     "property-grid-item": "/components/property-grid-item/property-grid-item",
     "loading-skeleton": "/components/loading-skeleton/loading-skeleton",
-    "empty-state": "/components/empty-state/empty-state"
+    "empty-state": "/components/empty-state/empty-state",
+    "offline-banner": "/components/offline-banner/offline-banner"
   }
 }

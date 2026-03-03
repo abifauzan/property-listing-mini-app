@@ -1,4 +1,7 @@
 <view class="listing-page">
+  <!-- Offline Banner -->
+  <offline-banner isOffline="{{isOffline}}" message="{{offlineMessage}}" />
+
   <!-- Search + Toggle Bar -->
   <view class="listing-page__toolbar flex flex-row items-center gap-2">
     <view class="listing-page__search-wrapper">
@@ -38,7 +41,7 @@
   </view>
 
   <!-- List View -->
-  <view class="listing-page__content listing-page__list" a:elif="{{viewMode === 'list'}}">
+  <view class="listing-page__content listing-page__list" a:if="{{!loading && !error && !isEmpty && viewMode === 'list'}}">
     <property-card
       a:for="{{properties}}"
       a:key="id"
@@ -47,7 +50,7 @@
   </view>
 
   <!-- Grid View -->
-  <view class="listing-page__content listing-page__grid flex flex-row flex-wrap gap-3" a:elif="{{viewMode === 'grid'}}">
+  <view class="listing-page__content listing-page__grid flex flex-row flex-wrap gap-3" a:if="{{!loading && !error && !isEmpty && viewMode === 'grid'}}">
     <view class="listing-page__grid-item" a:for="{{properties}}" a:key="id">
       <property-grid-item property="{{item}}" />
     </view>

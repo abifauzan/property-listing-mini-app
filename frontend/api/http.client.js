@@ -1,4 +1,6 @@
 const config = require('./config');
+const networkUtil = require('../utils/network');
+const constants = require('../utils/constants');
 
 /**
  * HTTP client wrapper around my.request with retry, timeout, and error handling.
@@ -26,37 +28,70 @@ const httpClient = {
     attempt = attempt || 0;
     const url = this._buildURL(path, params);
 
-    return new Promise(function (resolve, reject) {
-      my.request({
-        url: url,
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        timeout: config.timeout,
-        dataType: 'json',
-        success: function (res) {
-          if (res.status >= 200 && res.status < 300) {
-            resolve(res.data);
-          } else {
-            var error = httpClient._parseError(res);
-            reject(error);
-          }
-        },
-        fail: function (err) {
-          if (attempt < config.retryAttempts) {
-            setTimeout(function () {
-              httpClient._request(method, path, params, attempt + 1)
-                .then(resolve)
-                .catch(reject);
-            }, config.retryDelay * (attempt + 1));
-          } else {
-            reject({
-              message: err.errorMessage || 'Network request failed',
-              code: 'NETWORK_ERROR',
-            });
-          }
-        },
+    return networkUtil.checkConnectivity().then(function (networkStatus) {
+      if (!networkStatus.isConnected) {
+        return Promise.reject({
+          message: constants.ERROR_MESSAGES.NO_INTERNET,
+          code: 'NO_INTERNET',
+        });
+      }
+
+      if (networkUtil.isSlowConnection(networkStatus.networkType)) {
+        console.warn('[HTTP Client] Slow connection detected:', networkStatus.networkType);
+      }
+
+      return new Promise(function (resolve, reject) {
+        my.request({
+          url: url,
+          method: method,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: config.timeout,
+          dataType: 'json',
+          success: function (res) {
+            try {
+              if (res.status >= 200 && res.status < 300) {
+                var data = httpClient._safeParseResponse(res.data);
+                resolve(data);
+              } else {
+                var error = httpClient._parseError(res);
+                reject(error);
+              }
+            } catch (parseError) {
+              console.error('[HTTP Client] Response parsing error:', parseError);
+              reject({
+                message: constants.ERROR_MESSAGES.INVALID_DATA,
+                code: 'PARSE_ERROR',
+              });
+            }
+          },
+          fail: function (err) {
+            var isTimeout = err.error === 13 || (err.errorMessage && err.errorMessage.indexOf('timeout') !== -1);
+            
+            if (isTimeout) {
+              reject({
+                message: constants.ERROR_MESSAGES.TIMEOUT,
+                code: 'TIMEOUT',
+              });
+              return;
+            }
+
+            if (attempt < config.retryAttempts) {
+              console.log('[HTTP Client] Retrying request, attempt:', attempt + 1);
+              setTimeout(function () {
+                httpClient._request(method, path, params, attempt + 1)
+                  .then(resolve)
+                  .catch(reject);
+              }, config.retryDelay * (attempt + 1));
+            } else {
+              reject({
+                message: err.errorMessage || constants.ERROR_MESSAGES.NETWORK,
+                code: 'NETWORK_ERROR',
+              });
+            }
+          },
+        });
       });
     });
   },
@@ -87,6 +122,23 @@ const httpClient = {
   },
 
   /**
+   * Safely parse response data, handling malformed JSON.
+   * @param {*} data - Response data
+   * @returns {*} Parsed data
+   */
+  _safeParseResponse(data) {
+    if (typeof data === 'string') {
+      try {
+        return JSON.parse(data);
+      } catch (e) {
+        console.error('[HTTP Client] Failed to parse JSON string:', e);
+        throw new Error('Invalid JSON response');
+      }
+    }
+    return data;
+  },
+
+  /**
    * Parse error from response.
    * @param {Object} res - Raw response
    * @returns {Object} Structured error
@@ -94,9 +146,21 @@ const httpClient = {
   _parseError(res) {
     var data = res.data || {};
     var errorData = data.error || {};
+    var statusMessages = {
+      400: 'Bad request',
+      401: 'Unauthorized',
+      403: 'Forbidden',
+      404: 'Not found',
+      500: 'Server error',
+      502: 'Bad gateway',
+      503: 'Service unavailable',
+    };
+
+    var message = errorData.message || statusMessages[res.status] || constants.ERROR_MESSAGES.SERVER;
+    
     return {
-      message: errorData.message || 'An unexpected error occurred',
-      code: errorData.code || 'UNKNOWN_ERROR',
+      message: message,
+      code: errorData.code || 'HTTP_' + res.status,
       status: res.status,
     };
   },

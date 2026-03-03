@@ -1,4 +1,7 @@
 <view class="detail-page">
+  <!-- Offline Banner -->
+  <offline-banner isOffline="{{isOffline}}" message="{{offlineMessage}}" />
+
   <!-- Loading State -->
   <view a:if="{{loading}}">
     <loading-skeleton type="detail" count="{{4}}" />
@@ -18,8 +21,9 @@
     <!-- §7.2 Hero Image -->
     <image
       class="detail-page__hero"
-      src="{{property.imageUrl}}"
+      src="{{heroImageUrl}}"
       mode="aspectFill"
+      onError="onHeroImageError"
     />
 
     <!-- §7.3.1 Title + Price -->

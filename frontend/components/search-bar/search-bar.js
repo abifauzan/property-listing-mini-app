@@ -1,3 +1,5 @@
+var sanitizeUtil = require('../../utils/sanitize');
+
 Component({
   props: {
     value: '',
@@ -7,8 +9,9 @@ Component({
   methods: {
     onInput: function (e) {
       var value = e.detail.value;
+      var sanitized = sanitizeUtil.sanitizeSearchInput(value, 100);
       if (this.props.onChange) {
-        this.props.onChange(value);
+        this.props.onChange(sanitized);
       }
     },
 
@@ -20,8 +23,9 @@ Component({
 
     onConfirm: function (e) {
       var value = e.detail.value;
+      var sanitized = sanitizeUtil.sanitizeSearchInput(value, 100);
       if (this.props.onConfirm) {
-        this.props.onConfirm(value);
+        this.props.onConfirm(sanitized);
       }
     },
   },
