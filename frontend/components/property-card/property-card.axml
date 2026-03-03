@@ -2,9 +2,10 @@
   <view class="property-card__image-container">
     <image
       class="property-card__image"
-      src="{{property.imageUrl}}"
+      src="{{imageUrl}}"
       mode="aspectFill"
       lazy-load="{{true}}"
+      onError="onImageError"
     />
   </view>
   <view class="property-card__content flex flex-col flex-1">

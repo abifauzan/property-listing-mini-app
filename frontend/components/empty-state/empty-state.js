@@ -6,7 +6,7 @@ Component({
 
   methods: {
     onRetry: function () {
-      if (this.props.onRetry) {
+      if (this.props.onRetry && typeof this.props.onRetry === 'function') {
         this.props.onRetry();
       }
     },

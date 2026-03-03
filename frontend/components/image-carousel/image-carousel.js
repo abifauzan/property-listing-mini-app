@@ -14,6 +14,10 @@ Component({
       });
     },
 
+    onImageError: function (e) {
+      console.warn('[ImageCarousel] Image load failed:', e);
+    },
+
     onPreviewImage: function (e) {
       var index = e.currentTarget.dataset.index;
       var urls = this.props.images || [];

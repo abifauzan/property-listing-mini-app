@@ -29,6 +29,7 @@ var storageService = {
       });
     } catch (e) {
       console.error('[StorageService] Failed to save view mode:', e);
+      storageService._handleStorageError(e);
     }
   },
 
@@ -67,10 +68,12 @@ var storageService = {
         data: {
           data: data,
           expiry: Date.now() + ttl,
+          cachedAt: Date.now(),
         },
       });
     } catch (e) {
       console.error('[StorageService] Failed to cache data:', e);
+      storageService._handleStorageError(e);
     }
   },
 
@@ -82,6 +85,44 @@ var storageService = {
       my.removeStorageSync({ key: constants.STORAGE_KEYS.LISTING_CACHE });
     } catch (e) {
       console.error('[StorageService] Failed to clear cache:', e);
+    }
+  },
+
+  /**
+   * Get cache metadata (timestamp, expiry).
+   * @param {string} key - Cache key
+   * @returns {Object|null} Metadata or null
+   */
+  getCacheMetadata: function (key) {
+    try {
+      var res = my.getStorageSync({ key: key });
+      if (res.data && res.data.cachedAt) {
+        return {
+          cachedAt: res.data.cachedAt,
+          expiry: res.data.expiry,
+          isExpired: Date.now() >= res.data.expiry,
+        };
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  /**
+   * Handle storage errors and show appropriate messages.
+   * @param {Error} error - Storage error
+   */
+  _handleStorageError: function (error) {
+    var errorMsg = error && error.message ? error.message.toLowerCase() : '';
+    
+    if (errorMsg.indexOf('quota') !== -1 || errorMsg.indexOf('exceed') !== -1) {
+      console.error('[StorageService] Storage quota exceeded');
+      my.showToast({
+        type: 'fail',
+        content: constants.ERROR_MESSAGES.STORAGE_FULL,
+        duration: 3000,
+      });
     }
   },
 };

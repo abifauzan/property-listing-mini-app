@@ -1,7 +1,7 @@
 <view class="empty-state flex flex-col items-center justify-center">
   <image class="empty-state__icon" src="/assets/images/icon-empty.png" mode="aspectFit" />
   <text class="empty-state__message">{{message}}</text>
-  <view class="empty-state__retry" onTap="onRetry" a:if="{{showRetry}}">
+  <view class="empty-state__retry" catchTap="onRetry" a:if="{{showRetry}}">
     <text class="empty-state__retry-text">Retry</text>
   </view>
 </view>
