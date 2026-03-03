@@ -1,7 +1,4 @@
-<view class="search-bar">
-  <view class="search-bar__icon">
-    <image class="search-bar__icon-img" src="/assets/images/icon-search.png" mode="aspectFit" />
-  </view>
+<view class="search-bar flex flex-row items-center">
   <input
     class="search-bar__input"
     type="text"
@@ -12,7 +9,7 @@
     onConfirm="onConfirm"
     confirmType="search"
   />
-  <view class="search-bar__clear" onTap="onClear" a:if="{{value && value.length > 0}}">
+  <view class="search-bar__clear flex items-center justify-center flex-shrink-0" onTap="onClear" a:if="{{value && value.length > 0}}">
     <text class="search-bar__clear-text">✕</text>
   </view>
 </view>

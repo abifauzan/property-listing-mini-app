@@ -1,7 +1,9 @@
 <view class="image-carousel" a:if="{{images && images.length > 0}}">
   <swiper
     class="image-carousel__swiper"
-    indicator-dots="{{false}}"
+    indicator-dots="{{true}}"
+    indicator-color="#FFFFFF"
+    indicator-active-color="#1677FF"
     autoplay="{{false}}"
     circular="{{true}}"
     onChange="onChange"
@@ -16,7 +18,4 @@
       />
     </swiper-item>
   </swiper>
-  <view class="image-carousel__indicator">
-    <text class="image-carousel__indicator-text">{{currentIndex + 1}} / {{images.length}}</text>
-  </view>
 </view>

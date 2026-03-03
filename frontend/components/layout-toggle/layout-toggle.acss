@@ -1,17 +1,13 @@
 /* §3.2.2 Layout Toggle — square, matches input height */
 .layout-toggle {
   width: 76rpx;
-  height: 76rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #FFFFFF;
-  border: 1rpx solid #E5E5E5;
-  border-radius: 12rpx;
-  flex-shrink: 0;
+  height: 70rpx;
+  background-color: var(--color-bg-gray);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-base);
 }
 
 .layout-toggle__icon {
-  width: 36rpx;
-  height: 36rpx;
+  width: 50rpx;
+  height: 50rpx;
 }

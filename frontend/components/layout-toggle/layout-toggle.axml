@@ -1,4 +1,4 @@
-<view class="layout-toggle" onTap="onToggle">
+<view class="layout-toggle flex items-center justify-center flex-shrink-0" onTap="onToggle">
   <image
     class="layout-toggle__icon"
     a:if="{{mode === 'list'}}"

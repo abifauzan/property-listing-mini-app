@@ -2,16 +2,18 @@
 .about-page {
   width: 100%;
   min-height: 100vh;
-  background-color: #FFFFFF;
+  background-color: var(--color-bg-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* §2.2 Content centered, upper-middle area */
 .about-page__body {
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 120rpx;
-  padding-bottom: 60rpx;
 }
 
 /* §2.3 Circular logo, ~80-100 size → 180rpx */
@@ -24,13 +26,13 @@
 
 /* §2.4 Text block 60-70% width, centered, left-aligned text */
 .about-page__text-block {
-  width: 65%;
+  width: 90%;
 }
 
 .about-page__title {
   font-size: 36rpx;
   font-weight: 700;
-  color: #1A1A1A;
+  color: var(--color-text-primary);
   text-align: center;
   display: block;
   margin-bottom: 24rpx;
@@ -39,7 +41,7 @@
 /* §2.4 Paragraph: left-aligned, comfortable line-height */
 .about-page__description {
   font-size: 28rpx;
-  color: #666666;
+  color: var(--color-text-secondary);
   line-height: 1.6;
   text-align: left;
   margin-bottom: 24rpx;

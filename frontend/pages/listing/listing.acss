@@ -1,21 +1,20 @@
 /* §3 Listing Page */
 .listing-page {
-  width: 100%;
   min-height: 100vh;
-  background-color: #FFFFFF;
+  background-color: var(--color-bg-gray);
+  padding: 16rpx;
 }
 
 /* §3.2 Search + Toggle row directly under app bar */
 .listing-page__toolbar {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 16rpx 32rpx;
-  background-color: #FFFFFF;
+  background-color: var(--color-surface);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-base);
+  padding: 16rpx;
+
   position: sticky;
   top: 0;
-  z-index: 10;
-  gap: 16rpx;
+  z-index: var(--z-sticky);
 }
 
 .listing-page__search-wrapper {
@@ -25,21 +24,12 @@
 
 /* §4.1 Container padding 16 → 32rpx */
 .listing-page__content {
-  padding: 16rpx 32rpx 32rpx;
-}
-
-/* §4 List View */
-.listing-page__list {
-  padding-top: 0;
+  margin-top: 16rpx;
 }
 
 /* §5 Grid View — 2 fixed columns */
 .listing-page__grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 24rpx;
-  padding-top: 0;
+  /* Utility classes handle layout */
 }
 
 /* §5.2 Grid card width = (100% - gap) / 2 */

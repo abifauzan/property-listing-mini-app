@@ -3,22 +3,34 @@
    ======================================== */
 
 /* ------------------------------------------
-   Color Tokens (§0.2)
-   --brand-blue:    #1677FF
-   --text-primary:  #1A1A1A
-   --text-secondary:#666666
-   --border:        #E5E5E5
-   --chip-bg:       #1677FF
-   --chip-text:     #FFFFFF
+   CSS Custom Properties (Design Tokens)
    ------------------------------------------ */
 
 /* Reset & Base */
 page {
+  /* Color Tokens */
+  --color-brand:          #0090ef;
+  --color-surface:        #FFFFFF;
+  --color-bg-gray:        #F5F5F5;
+  --color-input-bg:       #EEEEEE;
+  --color-border:         #E5E5E5;
+  --color-text-primary:   #1A1A1A;
+  --color-text-secondary: #666666;
+  --color-text-muted:     #999999;
+  --color-text-inverse:   #FFFFFF;
+  --color-skeleton-base:  #F0F0F0;
+  --color-skeleton-shine: #E0E0E0;
+  
+  /* Spacing & Layout */
+  --radius-base:          8rpx;
+  --z-sticky:             10;
+  --z-fixed:              100;
+  
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 28rpx;
   line-height: 1.5;
-  color: #1A1A1A;
-  background-color: #FFFFFF;
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
   box-sizing: border-box;
 }
 
@@ -36,12 +48,12 @@ page {
 .font-semibold { font-weight: 600; }
 .font-bold { font-weight: 700; }
 
-.text-primary { color: #1677FF; }
-.text-secondary { color: #666666; }
-.text-muted { color: #999999; }
-.text-white { color: #FFFFFF; }
-.text-dark { color: #1A1A1A; }
-.text-price { color: #666666; }
+.text-primary { color: var(--color-brand); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-muted { color: var(--color-text-muted); }
+.text-white { color: var(--color-text-inverse); }
+.text-dark { color: var(--color-text-primary); }
+.text-price { color: var(--color-text-secondary); }
 
 /* Layout Utilities */
 .flex { display: flex; }
@@ -54,6 +66,7 @@ page {
 .justify-between { justify-content: space-between; }
 .justify-start { justify-content: flex-start; }
 .flex-1 { flex: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
 
 /* Spacing (4rpx base unit) */
 .p-0 { padding: 0; }
@@ -87,9 +100,12 @@ page {
 .mx-3 { margin-left: 24rpx; margin-right: 24rpx; }
 .mx-4 { margin-left: 32rpx; margin-right: 32rpx; }
 
+.gap-2 { gap: 16rpx; }
+.gap-3 { gap: 24rpx; }
+
 /* Border & Radius */
-.rounded-sm { border-radius: 8rpx; }
-.rounded { border-radius: 12rpx; }
+.rounded-sm { border-radius: var(--radius-base); }
+.rounded { border-radius: var(--radius-base); }
 .rounded-lg { border-radius: 16rpx; }
 .rounded-xl { border-radius: 24rpx; }
 .rounded-full { border-radius: 50%; }
@@ -100,9 +116,9 @@ page {
 .shadow-lg { box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.12); }
 
 /* Background Colors */
-.bg-white { background-color: #FFFFFF; }
-.bg-gray { background-color: #F5F5F5; }
-.bg-primary { background-color: #1677FF; }
+.bg-white { background-color: var(--color-surface); }
+.bg-gray { background-color: var(--color-bg-gray); }
+.bg-primary { background-color: var(--color-brand); }
 
 /* Width & Height */
 .w-full { width: 100%; }
