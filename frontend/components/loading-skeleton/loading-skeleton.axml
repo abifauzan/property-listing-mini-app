@@ -2,7 +2,7 @@
 <view a:if="{{type === 'list'}}">
   <view class="skeleton-list-item" a:for="{{items}}" a:key="*this">
     <view class="skeleton-list-item__image skeleton-shimmer"></view>
-    <view class="skeleton-list-item__content">
+    <view class="skeleton-list-item__content flex flex-col">
       <view class="skeleton-list-item__title skeleton-shimmer"></view>
       <view class="skeleton-list-item__price skeleton-shimmer"></view>
     </view>
@@ -10,7 +10,7 @@
 </view>
 
 <!-- Grid skeleton -->
-<view class="skeleton-grid" a:if="{{type === 'grid'}}">
+<view class="skeleton-grid flex flex-row flex-wrap gap-3" a:if="{{type === 'grid'}}">
   <view class="skeleton-grid-item" a:for="{{items}}" a:key="*this">
     <view class="skeleton-grid-item__image skeleton-shimmer"></view>
     <view class="skeleton-grid-item__content">
@@ -26,7 +26,7 @@
   <view class="skeleton-detail__body">
     <view class="skeleton-detail__title skeleton-shimmer"></view>
     <view class="skeleton-detail__price skeleton-shimmer"></view>
-    <view class="skeleton-detail__gallery">
+    <view class="skeleton-detail__gallery flex flex-row">
       <view class="skeleton-detail__thumb skeleton-shimmer" a:for="{{items}}" a:key="*this"></view>
     </view>
     <view class="skeleton-detail__desc-line skeleton-shimmer" a:for="{{items}}" a:key="*this"></view>

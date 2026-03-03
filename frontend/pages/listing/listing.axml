@@ -1,6 +1,6 @@
 <view class="listing-page">
   <!-- Search + Toggle Bar -->
-  <view class="listing-page__toolbar">
+  <view class="listing-page__toolbar flex flex-row items-center gap-2">
     <view class="listing-page__search-wrapper">
       <search-bar
         value="{{searchQuery}}"
@@ -47,7 +47,7 @@
   </view>
 
   <!-- Grid View -->
-  <view class="listing-page__content listing-page__grid" a:elif="{{viewMode === 'grid'}}">
+  <view class="listing-page__content listing-page__grid flex flex-row flex-wrap gap-3" a:elif="{{viewMode === 'grid'}}">
     <view class="listing-page__grid-item" a:for="{{properties}}" a:key="id">
       <property-grid-item property="{{item}}" />
     </view>

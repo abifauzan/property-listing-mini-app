@@ -1,8 +1,5 @@
 /* §3.2.1 Search Input */
 .search-bar {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
   height: 44rpx;
   gap: 12rpx;
 }
@@ -10,9 +7,10 @@
 .search-bar__input {
   flex: 1;
   font-size: 24rpx;
-  color: #1A1A1A;
-  background-color: #EEEEEE;
-  border: 1rpx solid #E5E5E5;
+  color: var(--color-text-primary);
+  background-color: var(--color-input-bg);
+  border: 1rpx solid var(--color-border);
+  border-radius: var(--radius-base);
   padding: 12rpx 16rpx;
   height: 44rpx;
   line-height: 44rpx;
@@ -21,13 +19,9 @@
 .search-bar__clear {
   width: 44rpx;
   height: 44rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
 }
 
 .search-bar__clear-text {
   font-size: 24rpx;
-  color: #999999;
+  color: var(--color-text-muted);
 }

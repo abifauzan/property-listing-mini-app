@@ -1,4 +1,4 @@
-<view class="property-grid-item" onTap="onTapCard">
+<view class="property-grid-item flex flex-col overflow-hidden" onTap="onTapCard">
   <view class="property-grid-item__image-container">
     <image
       class="property-grid-item__image"
@@ -7,7 +7,7 @@
       lazy-load="{{true}}"
     />
   </view>
-  <view class="property-grid-item__content">
+  <view class="property-grid-item__content flex flex-col flex-1">
     <text class="property-grid-item__title">{{property.title}}</text>
     <text class="property-grid-item__price">{{property.price}}</text>
   </view>

@@ -37,7 +37,7 @@
     <!-- §7.4 Facilities -->
     <view class="detail-page__section" a:if="{{property.facilities && property.facilities.length > 0}}">
       <text class="detail-page__section-title">Facilities</text>
-      <view class="detail-page__facilities">
+      <view class="detail-page__facilities flex flex-row flex-wrap gap-2">
         <view class="detail-page__facility-tag" a:for="{{property.facilities}}" a:key="*this">
           <text class="detail-page__facility-text">{{item}}</text>
         </view>
@@ -63,7 +63,7 @@
 
   <!-- Fixed Book Now Button -->
   <view class="detail-page__book-bar" a:if="{{property && !loading && !error}}">
-    <view class="detail-page__book-btn" onTap="onBookNow">
+    <view class="detail-page__book-btn flex items-center justify-center" onTap="onBookNow">
       <text class="detail-page__book-btn-text">Book Now</text>
     </view>
   </view>
