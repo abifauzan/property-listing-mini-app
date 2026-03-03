@@ -2,6 +2,7 @@
   "defaultTitle": "Property Listing",
   "titleBarColor": "#1677FF",
   "pullRefresh": true,
+  "pullRefreshText": "Pull to see easter egg",
   "usingComponents": {
     "search-bar": "/components/search-bar/search-bar",
     "layout-toggle": "/components/layout-toggle/layout-toggle",

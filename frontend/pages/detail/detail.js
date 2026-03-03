@@ -50,6 +50,16 @@ Page({
     }
   },
 
+  onPullDownRefresh: function () {
+    var self = this;
+    propertyService.clearCache();
+    this._fetchPropertyDetail().then(function () {
+      my.stopPullDownRefresh();
+    }).catch(function () {
+      my.stopPullDownRefresh();
+    });
+  },
+
   onBookNow: function () {
     my.showToast({
       type: 'success',
@@ -75,7 +85,7 @@ Page({
       error: null,
     });
 
-    propertyService.getPropertyById(this._propertyId).then(function (property) {
+    return propertyService.getPropertyById(this._propertyId).then(function (property) {
       my.setNavigationBar({ title: property.title });
       self.setData({
         property: property,

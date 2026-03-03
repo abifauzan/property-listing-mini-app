@@ -140,12 +140,11 @@ var propertyService = {
       })
       .map(function (item) {
         try {
-          var numericPrice = typeof item.Price === 'string' ? parseFloat(item.Price) : item.Price;
           return {
             id: item.documentId,
             title: item.Title || '',
-            price: formatUtil.formatPrice(numericPrice),
-            rawPrice: numericPrice,
+            price: formatUtil.formatPrice(item.Price),
+            rawPrice: item.Price,
             imageUrl: (item.Banner && item.Banner.url) || '',
             createdAt: formatUtil.formatDate(item.createdAt),
           };
