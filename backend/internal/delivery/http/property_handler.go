@@ -1,7 +1,6 @@
 package http
 
 import (
-	"encoding/json"
 	"log/slog"
 	"net/http"
 
@@ -26,50 +25,53 @@ func (h *PropertyHandler) RegisterRoutes(mux *http.ServeMux) {
 
 // GetListings handles GET /api/v1/properties?search={title}
 func (h *PropertyHandler) GetListings(w http.ResponseWriter, r *http.Request) {
-	search := r.URL.Query().Get("search")
+	requestID := getRequestID(r)
+	searchQuery := r.URL.Query().Get("search")
 
-	listings, err := h.usecase.GetListings(r.Context(), search)
+	sanitizedQuery, err := ValidateSearchQuery(searchQuery)
 	if err != nil {
-		slog.Error("failed to get listings", "error", err)
-		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "internal server error"})
+		slog.Warn("invalid search query", "error", err, "requestId", requestID)
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidInput, err.Error(), requestID)
 		return
 	}
 
-	resp := domain.PropertyListingResponse{
-		Data: domain.PropertyListingData{
-			PropertyListings: listings,
-		},
+	listings, err := h.usecase.GetListings(r.Context(), sanitizedQuery)
+	if err != nil {
+		slog.Error("failed to get listings", "error", err, "requestId", requestID)
+		writeError(w, http.StatusInternalServerError, ErrCodeInternalServer, "failed to retrieve property listings", requestID)
+		return
 	}
-	writeJSON(w, http.StatusOK, resp)
+
+	writeListingSuccess(w, listings)
 }
 
 // GetDetail handles GET /api/v1/properties/{id}
 func (h *PropertyHandler) GetDetail(w http.ResponseWriter, r *http.Request) {
+	requestID := getRequestID(r)
 	id := r.PathValue("id")
-	if id == "" {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "missing property id"})
+
+	if err := ValidatePropertyID(id); err != nil {
+		slog.Warn("invalid property id", "id", id, "error", err, "requestId", requestID)
+		writeError(w, http.StatusBadRequest, ErrCodeInvalidInput, err.Error(), requestID)
 		return
 	}
 
 	property, err := h.usecase.GetDetail(r.Context(), id)
 	if err != nil {
-		slog.Warn("property not found", "id", id, "error", err)
-		writeJSON(w, http.StatusNotFound, map[string]string{"error": "property not found"})
+		slog.Warn("property not found", "id", id, "error", err, "requestId", requestID)
+		writeError(w, http.StatusNotFound, ErrCodeNotFound, "property not found", requestID)
 		return
 	}
 
-	resp := domain.PropertyDetailResponse{
-		Data: domain.PropertyDetailData{
-			PropertyListings: []domain.Property{*property},
-		},
-	}
-	writeJSON(w, http.StatusOK, resp)
+	writeDetailSuccess(w, property)
 }
 
-func writeJSON(w http.ResponseWriter, status int, v any) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	if err := json.NewEncoder(w).Encode(v); err != nil {
-		slog.Error("failed to write JSON response", "error", err)
+// getRequestID extracts the request ID from the request context.
+func getRequestID(r *http.Request) string {
+	if id := r.Context().Value(RequestIDKey); id != nil {
+		if idStr, ok := id.(string); ok {
+			return idStr
+		}
 	}
+	return ""
 }

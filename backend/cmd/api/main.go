@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	delivery "github.com/abifauzan/property-listing-mini-app/backend/internal/delivery/http"
 	"github.com/abifauzan/property-listing-mini-app/backend/internal/middleware"
@@ -29,16 +33,32 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Get property count for health check
+	properties, _ := repo.GetAll(context.Background())
+	propertyCount := len(properties)
+
 	// Usecase
 	uc := usecase.NewPropertyUsecase(repo)
 
 	// HTTP handler & routes
 	mux := http.NewServeMux()
-	handler := delivery.NewPropertyHandler(uc)
-	handler.RegisterRoutes(mux)
 
-	// Middleware chain: Logger -> CORS -> Router
-	app := middleware.Logger(middleware.CORS(mux))
+	// Property endpoints
+	propertyHandler := delivery.NewPropertyHandler(uc)
+	propertyHandler.RegisterRoutes(mux)
+
+	// Health check endpoints
+	healthHandler := delivery.NewHealthHandler(true, propertyCount)
+	healthHandler.RegisterRoutes(mux)
+
+	// Middleware chain: RequestID -> Timeout -> Logger -> CORS -> Router
+	app := middleware.RequestID(
+		middleware.Timeout(30 * time.Second)(
+			middleware.Logger(
+				middleware.CORS(mux),
+			),
+		),
+	)
 
 	// Server
 	port := os.Getenv("PORT")
@@ -46,9 +66,36 @@ func main() {
 		port = "8080"
 	}
 
-	slog.Info("server starting", "port", port)
-	if err := http.ListenAndServe(":"+port, app); err != nil {
-		slog.Error("server failed", "error", err)
+	server := &http.Server{
+		Addr:         ":" + port,
+		Handler:      app,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	// Graceful shutdown
+	shutdownChan := make(chan os.Signal, 1)
+	signal.Notify(shutdownChan, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		slog.Info("server starting", "port", port, "properties", propertyCount)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			slog.Error("server failed", "error", err)
+			os.Exit(1)
+		}
+	}()
+
+	<-shutdownChan
+	slog.Info("shutdown signal received, gracefully shutting down...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		slog.Error("server shutdown failed", "error", err)
 		os.Exit(1)
 	}
+
+	slog.Info("server stopped gracefully")
 }

@@ -9,10 +9,11 @@
   font-size: 24rpx;
   color: var(--color-text-primary);
   background-color: var(--color-input-bg);
-  border: 1rpx solid var(--color-border);
+  border: 1rpx solid var(--color-border-dark);
   border-radius: var(--radius-base);
+  font-weight: 500;
   padding: 12rpx 16rpx;
-  height: 44rpx;
+  height: 34rpx;
   line-height: 44rpx;
 }
 

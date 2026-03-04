@@ -20,19 +20,36 @@ type JSONPropertyRepository struct {
 
 // NewJSONPropertyRepository creates a new repository and loads data from the
 // given JSON file path. Returns an error if the file cannot be read or parsed.
+// Invalid properties (missing required fields) are filtered out with a warning.
 func NewJSONPropertyRepository(filePath string) (*JSONPropertyRepository, error) {
 	data, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("reading properties file: %w", err)
 	}
 
-	var properties []domain.Property
-	if err := json.Unmarshal(data, &properties); err != nil {
+	var allProperties []domain.Property
+	if err := json.Unmarshal(data, &allProperties); err != nil {
 		return nil, fmt.Errorf("parsing properties JSON: %w", err)
 	}
 
+	// Validate and filter properties
+	validProperties := make([]domain.Property, 0, len(allProperties))
+	invalidCount := 0
+	for _, p := range allProperties {
+		if p.IsValid() {
+			validProperties = append(validProperties, p)
+		} else {
+			invalidCount++
+			fmt.Printf("WARNING: Skipping invalid property (id=%q, title=%q): missing required fields\n", p.DocumentID, p.Title)
+		}
+	}
+
+	if invalidCount > 0 {
+		fmt.Printf("INFO: Loaded %d valid properties, skipped %d invalid properties\n", len(validProperties), invalidCount)
+	}
+
 	return &JSONPropertyRepository{
-		properties: properties,
+		properties: validProperties,
 	}, nil
 }
 

@@ -9,11 +9,12 @@
 /* Reset & Base */
 page {
   /* Color Tokens */
-  --color-brand:          #0090ef;
+  --color-brand:          #008ff0;
   --color-surface:        #FFFFFF;
   --color-bg-gray:        #F5F5F5;
-  --color-input-bg:       #EEEEEE;
+  --color-input-bg:       #f1f0f0;
   --color-border:         #E5E5E5;
+  --color-border-dark:    #c0c0c0;
   --color-text-primary:   #1A1A1A;
   --color-text-secondary: #666666;
   --color-text-muted:     #999999;
@@ -22,7 +23,7 @@ page {
   --color-skeleton-shine: #E0E0E0;
   
   /* Spacing & Layout */
-  --radius-base:          8rpx;
+  --radius-base:          6rpx;
   --z-sticky:             10;
   --z-fixed:              100;
   

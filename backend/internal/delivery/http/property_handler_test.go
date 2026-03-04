@@ -158,3 +158,78 @@ func TestGetDetail_NotFound(t *testing.T) {
 		t.Fatalf("expected status 404, got %d", rec.Code)
 	}
 }
+
+func TestGetListings_InvalidSearchQuery(t *testing.T) {
+	uc := &mockUsecase{listings: testListings}
+	handler := NewPropertyHandler(uc)
+
+	mux := http.NewServeMux()
+	handler.RegisterRoutes(mux)
+
+	longQuery := string(make([]byte, 101))
+	for i := range longQuery {
+		longQuery = string(append([]byte(longQuery[:i]), 'a'))
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/properties?search="+longQuery, nil)
+	rec := httptest.NewRecorder()
+
+	mux.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400, got %d", rec.Code)
+	}
+
+	var resp ErrorResponse
+	if err := json.NewDecoder(rec.Body).Decode(&resp); err != nil {
+		t.Fatalf("failed to decode error response: %v", err)
+	}
+	if resp.Error.Code != ErrCodeInvalidInput {
+		t.Fatalf("expected error code %s, got %s", ErrCodeInvalidInput, resp.Error.Code)
+	}
+}
+
+func TestGetDetail_InvalidPropertyID(t *testing.T) {
+	uc := &mockUsecase{detail: testDetail}
+	handler := NewPropertyHandler(uc)
+
+	mux := http.NewServeMux()
+	handler.RegisterRoutes(mux)
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v1/properties/invalid@id", nil)
+	rec := httptest.NewRecorder()
+
+	mux.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status 400, got %d", rec.Code)
+	}
+
+	var resp ErrorResponse
+	if err := json.NewDecoder(rec.Body).Decode(&resp); err != nil {
+		t.Fatalf("failed to decode error response: %v", err)
+	}
+	if resp.Error.Code != ErrCodeInvalidInput {
+		t.Fatalf("expected error code %s, got %s", ErrCodeInvalidInput, resp.Error.Code)
+	}
+}
+
+func TestGetRequestID_WithContext(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+	ctx := context.WithValue(req.Context(), RequestIDKey, "test-request-id")
+	req = req.WithContext(ctx)
+
+	id := getRequestID(req)
+	if id != "test-request-id" {
+		t.Fatalf("expected request ID 'test-request-id', got %q", id)
+	}
+}
+
+func TestGetRequestID_NoContext(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/test", nil)
+
+	id := getRequestID(req)
+	if id != "" {
+		t.Fatalf("expected empty request ID, got %q", id)
+	}
+}

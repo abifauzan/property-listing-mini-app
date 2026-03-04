@@ -68,3 +68,11 @@ type PropertyUsecase interface {
 	GetListings(ctx context.Context, search string) ([]PropertyListing, error)
 	GetDetail(ctx context.Context, id string) (*Property, error)
 }
+
+// IsValid checks if a property has all required fields.
+func (p *Property) IsValid() bool {
+	return p.DocumentID != "" &&
+		p.Title != "" &&
+		p.Price != "" &&
+		p.Banner.URL != ""
+}

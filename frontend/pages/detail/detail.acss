@@ -40,20 +40,21 @@
 /* §7.3 Sections — consistent spacing */
 .detail-page__section {
   padding: 16rpx 32rpx;
+  font-weight: 700;
 }
 
 /* §0.3 Section headings: bold */
 .detail-page__section-title {
   font-size: 32rpx;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--color-text-primary);
   display: block;
-  margin-bottom: 16rpx;
+  margin-bottom: 10rpx;
 }
 
 /* §7.3.2 Paragraph text: softer color */
 .detail-page__text {
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: var(--color-text-primary);
   line-height: normal;
   display: block;
@@ -68,7 +69,7 @@
 .detail-page__facility-tag {
   background-color: var(--color-brand);
   border-radius: var(--radius-base);
-  padding: 12rpx 24rpx;
+  padding: 4rpx 20rpx;
 }
 
 .detail-page__facility-text {
@@ -79,7 +80,7 @@
 
 /* Bottom spacer for fixed button */
 .detail-page__bottom-spacer {
-  height: 200rpx;
+  height: 280rpx;
 }
 
 /* §8 Fixed Bottom CTA Button */
@@ -89,7 +90,8 @@
   left: 0;
   right: 0;
   padding: 16rpx 32rpx;
-  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  padding-top: 60rpx;
+  padding-bottom: calc(12rpx + env(safe-area-inset-bottom));
   background-color: var(--color-surface);
   box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
   z-index: var(--z-fixed);
@@ -105,6 +107,6 @@
 
 .detail-page__book-btn-text {
   font-size: 32rpx;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--color-text-inverse);
 }
