@@ -4,28 +4,46 @@ A full-stack property listing application built with **Go backend** and **DANA M
 
 ---
 
-## 📦 Project Structure
+## � Table of Contents
+
+- [Project Overview](#-project-overview)
+- [Quick Start](#-quick-start)
+- [Running the Backend](#-running-the-backend)
+- [Running the Mini Program](#-running-the-mini-program)
+- [Environment Configuration](#-environment-configuration)
+- [Architecture](#-architecture)
+- [Screenshots](#-screenshots)
+- [Documentation](#-documentation)
+- [Technology Stack](#-technology-stack)
+- [Testing](#-testing)
+- [Troubleshooting](#-troubleshooting)
+
+---
+
+## 📖 Project Overview
+
+This project is a property listing application that allows users to browse, search, and view property details. It consists of:
+
+- **Backend**: RESTful API built with Go using Clean Architecture
+- **Frontend**: DANA Mini Program with component-based architecture
+- **Features**: Property search, layout toggle (list/grid), image carousel, pull-to-refresh
+
+### Project Structure
 
 ```
 property-listing-mini-app/
 ├── backend/                    # Go REST API
 │   ├── cmd/api/               # Application entry point
 │   ├── internal/              # Clean architecture layers
-│   │   ├── domain/           # Business entities & interfaces
-│   │   ├── repository/       # Data access layer (JSON)
-│   │   ├── usecase/          # Business logic
-│   │   ├── delivery/http/    # HTTP handlers & routing
-│   │   └── middleware/       # CORS & logging
-│   ├── data/                 # JSON data source
-│   └── docs/                 # API specification (OpenAPI 3.0)
-├── frontend/                  # DANA Mini Program
-│   ├── pages/                # Screens (about, listing, detail)
-│   ├── components/           # Reusable UI components
-│   ├── api/                  # API client layer
-│   ├── services/             # Business logic services
-│   ├── utils/                # Helper functions
-│   └── assets/               # Images and static files
-└── data/                     # JSON schemas (reference)
+│   ├── data/                  # JSON data source
+│   └── docs/                  # API specification (OpenAPI 3.0)
+├── frontend/                   # DANA Mini Program
+│   ├── pages/                 # Screens (about, listing, detail)
+│   ├── components/            # Reusable UI components
+│   ├── api/                   # API client layer
+│   ├── services/              # Business logic services
+│   └── assets/                # Images and static files
+└── screenshots/               # Application screenshots
 ```
 
 ---
@@ -34,31 +52,197 @@ property-listing-mini-app/
 
 ### Prerequisites
 
-- **Go** 1.25+ (backend)
-- **DANA Mini Program IDE** (frontend)
-- **Node.js** 18+ (optional, for tooling)
+- **Go** 1.25+ (for backend)
+- **DANA Mini Program IDE** (for frontend)
+- **Node.js** 18+ (optional, for frontend config scripts)
 
-### 1. Start the Backend API
+---
+
+## 🖥️ Running the Backend
+
+### Step 1: Navigate to Backend Directory
 
 ```bash
 cd backend
+```
+
+### Step 2: Start the Server
+
+**Option 1: Using Go (Development)**
+
+```bash
 go run cmd/api/main.go
+```
+
+**Option 2: Using Makefile**
+
+```bash
+# Development mode (default)
+make run
+
+# Staging mode
+make run-staging
+
+# Production mode
+make run-prod
 ```
 
 The API will be available at **`http://localhost:8080/api/v1`**
 
-### 2. Open the Mini Program
+### Step 3: Verify Server is Running
 
-1. Open **DANA Mini Program IDE**
-2. Import the `frontend/` directory as a project
-3. Click **Run** to start the simulator
-4. The app will connect to the backend automatically
+```bash
+# Test API endpoint
+curl http://localhost:8080/api/v1/properties
+
+# Expected: JSON response with property listings
+```
+
+### API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/properties` | GET | List all properties (supports `?search={query}`) |
+| `/api/v1/properties/{id}` | GET | Get property detail by ID |
+
+**📚 For detailed backend architecture, see [`backend/README.md`](backend/README.md)**
 
 ---
 
-## 🏗️ Architecture Overview
+## 📱 Running the Mini Program
 
-### Backend (Go)
+### Step 1: Open DANA Mini Program IDE
+
+Download and install the latest version of **DANA Mini Program IDE**.
+
+### Step 2: Import the Project
+
+1. Open **DANA Mini Program IDE**
+2. Click **File** → **Import Project**
+3. Select the `frontend/` directory
+4. Click **Open**
+
+### Step 3: Configure Environment (Optional)
+
+**For Simulator (Default)**:
+- No configuration needed
+- Uses `http://localhost:8080/api/v1` by default
+
+**For Physical Device Testing**:
+
+```bash
+cd frontend
+
+# Copy environment template
+cp .env.example .env
+
+# Edit .env and set your computer's IP address
+# Example: API_BASE_URL=http://192.168.1.100:8080/api/v1
+
+# Generate config
+npm run config:dev
+```
+
+### Step 4: Run the Simulator
+
+1. Ensure the backend is running
+2. Click the **Run** button in the IDE
+3. The simulator will launch with the app
+
+### IDE Requirements
+
+- **DANA Mini Program IDE** (latest version)
+- **Minimum OS**: macOS 10.14+ / Windows 10+
+- **RAM**: 4GB minimum, 8GB recommended
+
+**📚 For detailed frontend architecture, see [`frontend/README.md`](frontend/README.md)**
+
+---
+
+## 🔧 Environment Configuration
+
+Both backend and frontend support multiple environments (development, staging, production) without code changes.
+
+### Backend Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ENV` | `development` | Environment name |
+| `PORT` | `8080` | Server port |
+| `DATA_PATH` | `data/properties.json` | JSON data file path |
+| `CORS_ALLOW_ORIGIN` | `*` | CORS allowed origin |
+| `LOG_LEVEL` | `info` | Logging level |
+
+**How to Switch Environments:**
+
+```bash
+cd backend
+
+# Development (default)
+make run
+
+# Staging
+make run-staging
+
+# Production
+make run-prod
+```
+
+**Using .env file:**
+
+```bash
+cd backend
+cp .env.example .env
+# Edit .env with your values
+export $(cat .env | xargs) && go run cmd/api/main.go
+```
+
+### Frontend Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `ENV` | `development` | Environment name |
+| `API_BASE_URL` | `http://localhost:8080/api/v1` | Backend API URL |
+| `TIMEOUT` | `10000` | Request timeout (ms) |
+| `RETRY_ATTEMPTS` | `2` | Number of retry attempts |
+
+**How to Switch Environments:**
+
+```bash
+cd frontend
+
+# Development (default)
+npm run config:dev
+
+# Staging
+npm run config:staging
+
+# Production
+npm run config:prod
+```
+
+**Using .env file for custom configuration:**
+
+```bash
+cd frontend
+cp .env.example .env
+# Edit .env with your values
+npm run config:dev
+```
+
+**Environment Presets:**
+
+| Environment | API Base URL |
+|-------------|--------------|
+| `development` | `http://localhost:8080/api/v1` |
+| `staging` | `https://staging-api.example.com/api/v1` |
+| `production` | `https://api.example.com/api/v1` |
+
+---
+
+## 🏗️ Architecture
+
+### Backend Architecture (Go)
 
 **Clean Architecture** with strict layer separation:
 
@@ -79,13 +263,14 @@ Domain Layer (entities & interfaces)
 **Key Principles**:
 - Dependency injection for testability
 - Interface-based design
-- Single responsibility per layer
 - Repository pattern for data abstraction
 - Structured logging (JSON)
 
-### Frontend (DANA Mini Program)
+**📚 Detailed architecture: [`backend/README.md`](backend/README.md)**
 
-**Component-based architecture** following mini-program conventions:
+### Frontend Architecture (DANA Mini Program)
+
+**Component-based architecture**:
 
 ```
 Pages (AXML + JS + ACSS)
@@ -100,78 +285,50 @@ Backend API
 ```
 
 **Key Features**:
-- AXML templating (mini-program markup)
-- ACSS styling (mini-program CSS)
+- AXML templating
+- ACSS styling
 - Component lifecycle management
 - State management with `setData()`
 - Pull-to-refresh support
 - Loading & empty states
 
----
-
-## 📡 API Endpoints
-
-| Endpoint | Method | Query Params | Description |
-|----------|--------|--------------|-------------|
-| `/api/v1/properties` | GET | `?search={query}` | List properties (with optional search) |
-| `/api/v1/properties/{id}` | GET | — | Get property detail by ID |
-
-### Example Requests
-
-```bash
-# Get all properties
-curl http://localhost:8080/api/v1/properties
-
-# Search properties by title
-curl http://localhost:8080/api/v1/properties?search=villa
-
-# Get property detail
-curl http://localhost:8080/api/v1/properties/x0zzhpyrox8ixdy75e2zpw1m
-```
-
-**Response Format**:
-```json
-{
-  "data": {
-    "propertyListings": [
-      {
-        "documentId": "x0zzhpyrox8ixdy75e2zpw1m",
-        "Banner": { "url": "https://..." },
-        "Title": "My Villa Sample",
-        "Price": "750000",
-        "createdAt": "2025-01-31T08:18:56.778Z"
-      }
-    ]
-  }
-}
-```
+**📚 Detailed architecture: [`frontend/README.md`](frontend/README.md)**
 
 ---
 
-## 🎯 Features
+## � Screenshots
 
-### ✅ Frontend Features (DANA Mini Program)
+### About Page
+![About Page](screenshots/about-page.png)
 
-- **About Screen** — Static information page with app description
-- **Property Listing** — Browse all properties with search
-- **Search Bar** — Real-time filtering by property title
-- **Layout Toggle** — Switch between vertical list and grid view
-- **Property Detail** — Full property information with image carousel
-- **Image Gallery** — Swipeable carousel with pagination dots
-- **Pull-to-Refresh** — Reload property data
-- **Loading States** — Skeleton screens during data fetch
-- **Empty States** — User-friendly messages for no results
-- **Book Now** — Demo booking action (shows toast)
+### Property Listing - List View
+![Listing - List View](screenshots/listing-list-view.png)
 
-### ✅ Backend Features (Go API)
+### Property Listing - Grid View
+![Listing - Grid View](screenshots/listing-grid-view.png)
 
-- **RESTful API** — Standard HTTP methods
-- **Search Functionality** — Case-insensitive title search
-- **CORS Support** — Cross-origin requests enabled
-- **Error Handling** — Structured error responses
-- **Structured Logging** — JSON logs with request/response details
-- **Clean Architecture** — Testable, maintainable codebase
-- **Unit Tests** — Repository and use case tests included
+### Property Listing - Search
+![Listing - Search](screenshots/listing-search.png)
+
+### Property Detail
+![Property Detail](screenshots/property-detail-1.png)
+![Property Detail](screenshots/property-detail-2.png)
+![Property Detail](screenshots/property-detail-3.png)
+
+---
+
+## � Documentation
+
+### Main Documentation
+- **Backend Architecture & API**: [`backend/README.md`](backend/README.md)
+- **Frontend Architecture & Components**: [`frontend/README.md`](frontend/README.md)
+
+### API Documentation
+- **API Documentation**: [`backend/docs/README.md`](backend/docs/README.md)
+- **OpenAPI Specification**: [`backend/docs/api-spec.yaml`](backend/docs/api-spec.yaml)
+
+### Additional Resources
+- **Edge Cases Handling**: [`frontend/EDGE_CASES.md`](frontend/EDGE_CASES.md)
 
 ---
 
@@ -179,14 +336,14 @@ curl http://localhost:8080/api/v1/properties/x0zzhpyrox8ixdy75e2zpw1m
 
 ### Backend
 
-| Component | Technology | Version |
-|-----------|-----------|---------|
-| Language | Go | 1.25.0 |
-| HTTP Framework | `net/http` (stdlib) | — |
-| Architecture | Clean Architecture | — |
-| Data Source | JSON file | — |
-| Logging | `log/slog` (stdlib) | — |
-| API Spec | OpenAPI 3.0 | — |
+| Component | Technology |
+|-----------|-----------|
+| Language | Go 1.25.0 |
+| HTTP Framework | `net/http` (stdlib) |
+| Architecture | Clean Architecture |
+| Data Source | JSON file |
+| Logging | `log/slog` (stdlib) |
+| API Spec | OpenAPI 3.0 |
 
 ### Frontend
 
@@ -196,8 +353,7 @@ curl http://localhost:8080/api/v1/properties/x0zzhpyrox8ixdy75e2zpw1m
 | Markup | AXML (Ant XML) |
 | Styling | ACSS (Ant CSS) |
 | Scripting | JavaScript (ES6+) |
-| HTTP Client | `my.request` (mini-program API) |
-| Components | Custom components |
+| HTTP Client | `my.request` |
 
 ---
 
@@ -207,150 +363,31 @@ curl http://localhost:8080/api/v1/properties/x0zzhpyrox8ixdy75e2zpw1m
 
 ```bash
 cd backend
+
+# Run all tests
 go test ./... -v
+
+# Run with coverage
+go test ./... -cover
 ```
 
 **Test Coverage**:
-- Repository layer tests (JSON data access)
-- Use case layer tests (business logic)
-- Mock-based testing with interfaces
+- Repository layer (JSON data access)
+- Use case layer (business logic)
+- Mock-based testing
 
 ### Frontend Testing
 
 Manual testing checklist:
 - ✅ About page displays correctly
-- ✅ Listing page loads properties
-- ✅ Search filters properties by title
-- ✅ Layout toggle switches views
-- ✅ Detail page shows full property info
-- ✅ Image carousel swipes correctly
-- ✅ Pull-to-refresh reloads data
-- ✅ Loading states appear during fetch
-- ✅ Empty state shows when no results
-- ✅ Book Now shows confirmation toast
-
----
-
-## 📚 Documentation
-
-- **Backend README**: [`backend/README.md`](backend/README.md)
-- **API Documentation**: [`backend/docs/README.md`](backend/docs/README.md)
-- **API Spec (OpenAPI)**: [`backend/docs/api-spec.yaml`](backend/docs/api-spec.yaml)
-- **Frontend README**: [`frontend/README.md`](frontend/README.md) *(if created)*
-
----
-
-## 🔧 Configuration
-
-### Backend Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `8080` | Server listen port |
-| `DATA_PATH` | `data/properties.json` | Path to JSON data file |
-
-### Frontend API Configuration
-
-Update `frontend/api/config.js` to change the backend URL:
-
-```javascript
-const API_BASE_URL = 'http://localhost:8080';
-```
-
-For physical device testing, use your computer's IP address:
-
-```javascript
-const API_BASE_URL = 'http://192.168.1.100:8080';
-```
-
----
-
-## 🚢 Deployment
-
-### Backend
-
-Build and run the binary:
-
-```bash
-cd backend
-go build -o property-api cmd/api/main.go
-./property-api
-```
-
-Or deploy to a cloud provider (e.g., Google Cloud Run, AWS Lambda, Heroku).
-
-### Frontend
-
-Package the mini-program and submit to the DANA Mini Program platform following their deployment guidelines.
-
----
-
-## 📝 Development Workflow
-
-1. **Start Backend**:
-   ```bash
-   cd backend && go run cmd/api/main.go
-   ```
-
-2. **Open Mini Program IDE**:
-   - Import `frontend/` directory
-   - Click **Run** to start simulator
-
-3. **Make Changes**:
-   - Backend: Edit files in `internal/`
-   - Frontend: Edit files in `pages/`, `components/`
-
-4. **Test**:
-   - Backend: `go test ./...`
-   - Frontend: Manual testing in simulator
-
----
-
-## 🎨 Design Decisions
-
-### Why Go for Backend?
-
-- **Performance**: Fast compilation and execution
-- **Simplicity**: Strong standard library, minimal dependencies
-- **Scalability**: Excellent concurrency support
-- **Type Safety**: Compile-time error checking
-- **Clean Architecture**: Natural fit for layered design
-
-### Why DANA Mini Program?
-
-- **Requirement**: Specified in the technical assessment
-- **Ecosystem**: Integrated with DANA platform
-- **Performance**: Lightweight and fast
-- **User Base**: Direct access to DANA users
-
-### Why Clean Architecture?
-
-- **Testability**: Each layer can be tested independently
-- **Maintainability**: Clear separation of concerns
-- **Scalability**: Easy to add new features
-- **Flexibility**: Can swap data sources without changing business logic
-
----
-
-## 🔄 Future Enhancements
-
-### Backend
-- [ ] Database integration (PostgreSQL/MongoDB)
-- [ ] Authentication & authorization (JWT)
-- [ ] Pagination for large datasets
-- [ ] Advanced filtering (price range, facilities)
-- [ ] Image upload service
-- [ ] Rate limiting
-- [ ] API versioning
-
-### Frontend
-- [ ] Favorites/wishlist functionality
-- [ ] Advanced filters (price, location, facilities)
-- [ ] Map view integration
-- [ ] User authentication
-- [ ] Booking history
-- [ ] Push notifications
-- [ ] Offline mode with local storage
+- ✅ Property listing loads
+- ✅ Search filters by title
+- ✅ Layout toggle (list/grid)
+- ✅ Property detail view
+- ✅ Image carousel
+- ✅ Pull-to-refresh
+- ✅ Loading states
+- ✅ Empty states
 
 ---
 
@@ -364,19 +401,51 @@ lsof -ti:8080 | xargs kill -9
 ```
 
 **Data file not found:**
-Ensure `backend/data/properties.json` exists or set `DATA_PATH` environment variable.
+```bash
+# Ensure file exists
+ls -la backend/data/properties.json
+
+# Or set custom path
+DATA_PATH=/path/to/data.json go run cmd/api/main.go
+```
 
 ### Frontend Issues
 
 **Cannot connect to backend:**
-- Ensure backend is running on `http://localhost:8080`
-- For physical devices, update API URL to your computer's IP
+- Ensure backend is running: `curl http://localhost:8080/api/v1/properties`
+- For physical devices, use your computer's IP in `.env`
 - Check firewall settings
 
 **Mini Program IDE errors:**
-- Ensure you're using the latest DANA Mini Program IDE
+- Use the latest DANA Mini Program IDE
 - Clear cache and restart IDE
-- Check `app.json` for configuration errors
+- Verify `app.json` configuration
+
+**Properties not loading:**
+- Check API configuration in `frontend/config/env.js`
+- Verify network connectivity
+- Check browser/IDE console for errors
+
+---
+
+## 🎯 Features
+
+### Frontend Features
+- About screen with app information
+- Property listing with search
+- Layout toggle (list/grid view)
+- Property detail with image carousel
+- Pull-to-refresh
+- Loading & empty states
+- Book Now demo action
+
+### Backend Features
+- RESTful API
+- Search functionality
+- CORS support
+- Structured logging
+- Error handling
+- Unit tests
 
 ---
 

@@ -6,10 +6,10 @@ import (
 	"time"
 )
 
-// CORS adds permissive CORS headers for development.
-func CORS(next http.Handler) http.Handler {
+// CORS adds CORS headers with configurable allowed origin.
+func CORS(next http.Handler, allowOrigin string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Origin", allowOrigin)
 		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 

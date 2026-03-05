@@ -7,7 +7,6 @@
     />
 
     <view class="about-page__text-block">
-      <text class="about-page__title">About Property Finder</text>
       <text class="about-page__description">
         Property Finder is a simple app that allows you to search for properties in your area. It is built using Mini Program Studio.
       </text>
