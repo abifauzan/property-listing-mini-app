@@ -59,6 +59,9 @@ go.sum
 .env.test.local
 .env.production.local
 
+# Frontend generated config (auto-generated from .env)
+frontend/config/env.js
+
 # Build directories
 dist/
 build/

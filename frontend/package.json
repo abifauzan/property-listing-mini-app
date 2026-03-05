@@ -1,0 +1,13 @@
+{
+  "name": "property-finder-mini-app",
+  "version": "1.0.0",
+  "description": "DANA Mini Program for Property Listing",
+  "scripts": {
+    "config:dev": "node scripts/build-config.js development",
+    "config:staging": "node scripts/build-config.js staging",
+    "config:prod": "node scripts/build-config.js production"
+  },
+  "keywords": ["dana", "mini-program", "property"],
+  "author": "Abi Fauzan",
+  "license": "MIT"
+}

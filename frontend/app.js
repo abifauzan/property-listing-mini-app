@@ -1,10 +1,14 @@
+const envConfig = require('./config/env');
+
 App({
   globalData: {
-    apiBaseURL: 'http://localhost:8080/api/v1',
+    apiBaseURL: envConfig.apiBaseURL,
   },
 
   onLaunch() {
     console.log('Property Finder App launched');
+    console.log('Environment:', envConfig.env);
+    console.log('API Base URL:', envConfig.apiBaseURL);
   },
 
   onShow() {

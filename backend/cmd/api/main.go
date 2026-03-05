@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/abifauzan/property-listing-mini-app/backend/internal/config"
 	delivery "github.com/abifauzan/property-listing-mini-app/backend/internal/delivery/http"
 	"github.com/abifauzan/property-listing-mini-app/backend/internal/middleware"
 	"github.com/abifauzan/property-listing-mini-app/backend/internal/repository"
@@ -12,18 +13,17 @@ import (
 )
 
 func main() {
-	// Structured logger
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+	// Load configuration
+	cfg := config.Load()
+
+	// Structured logger with configured level
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: cfg.LogLevel}))
 	slog.SetDefault(logger)
 
-	// Data file path — configurable via env, defaults to local data directory
-	dataPath := os.Getenv("DATA_PATH")
-	if dataPath == "" {
-		dataPath = "data/properties.json"
-	}
+	slog.Info("configuration loaded", "env", cfg.Env, "port", cfg.Port)
 
 	// Repository
-	repo, err := repository.NewJSONPropertyRepository(dataPath)
+	repo, err := repository.NewJSONPropertyRepository(cfg.DataPath)
 	if err != nil {
 		slog.Error("failed to initialize repository", "error", err)
 		os.Exit(1)
@@ -38,16 +38,11 @@ func main() {
 	handler.RegisterRoutes(mux)
 
 	// Middleware chain: Logger -> CORS -> Router
-	app := middleware.Logger(middleware.CORS(mux))
+	app := middleware.Logger(middleware.CORS(mux, cfg.CORSAllowOrigin))
 
 	// Server
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	slog.Info("server starting", "port", port)
-	if err := http.ListenAndServe(":"+port, app); err != nil {
+	slog.Info("server starting", "port", cfg.Port)
+	if err := http.ListenAndServe(":"+cfg.Port, app); err != nil {
 		slog.Error("server failed", "error", err)
 		os.Exit(1)
 	}
