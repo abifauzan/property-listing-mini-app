@@ -1,6 +1,7 @@
 {
   "defaultTitle": "Property Detail",
   "titleBarColor": "#1677FF",
+  "pullRefresh": false,
   "usingComponents": {
     "image-carousel": "/components/image-carousel/image-carousel",
     "loading-skeleton": "/components/loading-skeleton/loading-skeleton",
