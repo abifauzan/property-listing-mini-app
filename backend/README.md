@@ -207,30 +207,29 @@ go tool cover -html=coverage.out
 backend/
 ├── cmd/
 │   └── api/
-│       └── main.go                    # Application entry point
+│       └── main.go                       # Application entry point
 ├── internal/
 │   ├── domain/
-│   │   └── property.go               # Entity & repository interface
+│   │   └── property.go                  # Entity & repository interface
 │   ├── repository/
-│   │   ├── json_repository.go        # JSON file implementation
-│   │   └── json_repository_test.go   # Repository tests
+│   │   ├── json_repository.go           # JSON file implementation
+│   │   └── json_repository_test.go      # Repository tests
 │   ├── usecase/
-│   │   ├── property_usecase.go       # Business logic
-│   │   └── property_usecase_test.go  # Use case tests
+│   │   ├── property_usecase.go          # Business logic
+│   │   └── property_usecase_test.go     # Use case tests
 │   ├── delivery/
 │   │   └── http/
-│   │       ├── handler.go            # HTTP handlers
-│   │       └── response.go           # Response helpers
+│   │       ├── property_handler.go      # HTTP handlers
+│   │       └── property_handler_test.go # Handler tests
 │   └── middleware/
-│       ├── cors.go                   # CORS middleware
-│       └── logger.go                 # Request logging
+│       └── middleware.go                # CORS & logging middleware
 ├── data/
-│   └── properties.json               # Property data source
+│   └── properties.json                  # Property data source
 ├── docs/
-│   ├── README.md                     # API documentation
-│   └── api-spec.yaml                 # OpenAPI 3.0 spec
-├── go.mod                            # Go module definition
-└── README.md                         # This file
+│   ├── README.md                        # API documentation
+│   └── api-spec.yaml                    # OpenAPI 3.0 spec
+├── go.mod                               # Go module definition
+└── README.md                            # This file
 ```
 
 ---

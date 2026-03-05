@@ -231,12 +231,31 @@ Manual testing checklist:
 
 ---
 
-## 📚 Documentation
+## � Screenshots
+
+### About Page
+![About Page](screenshots/about-page.png)
+
+### Property Listing - List View
+![Listing - List View](screenshots/listing-list-view.png)
+
+### Property Listing - Grid View
+![Listing - Grid View](screenshots/listing-grid-view.png)
+
+### Property Listing - Search
+![Listing - Search](screenshots/listing-search.png)
+
+### Property Detail
+![Property Detail](screenshots/property-detail.png)
+
+---
+
+## �📚 Documentation
 
 - **Backend README**: [`backend/README.md`](backend/README.md)
 - **API Documentation**: [`backend/docs/README.md`](backend/docs/README.md)
 - **API Spec (OpenAPI)**: [`backend/docs/api-spec.yaml`](backend/docs/api-spec.yaml)
-- **Frontend README**: [`frontend/README.md`](frontend/README.md) *(if created)*
+- **Frontend README**: [`frontend/README.md`](frontend/README.md)
 
 ---
 

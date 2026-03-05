@@ -31,7 +31,12 @@ func (h *PropertyHandler) GetListings(w http.ResponseWriter, r *http.Request) {
 	listings, err := h.usecase.GetListings(r.Context(), search)
 	if err != nil {
 		slog.Error("failed to get listings", "error", err)
-		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "internal server error"})
+		writeJSON(w, http.StatusInternalServerError, map[string]any{
+			"error": map[string]string{
+				"message": "internal server error",
+				"code":    "INTERNAL_ERROR",
+			},
+		})
 		return
 	}
 
@@ -47,14 +52,24 @@ func (h *PropertyHandler) GetListings(w http.ResponseWriter, r *http.Request) {
 func (h *PropertyHandler) GetDetail(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	if id == "" {
-		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "missing property id"})
+		writeJSON(w, http.StatusBadRequest, map[string]any{
+			"error": map[string]string{
+				"message": "missing property id",
+				"code":    "BAD_REQUEST",
+			},
+		})
 		return
 	}
 
 	property, err := h.usecase.GetDetail(r.Context(), id)
 	if err != nil {
 		slog.Warn("property not found", "id", id, "error", err)
-		writeJSON(w, http.StatusNotFound, map[string]string{"error": "property not found"})
+		writeJSON(w, http.StatusNotFound, map[string]any{
+			"error": map[string]string{
+				"message": "property not found",
+				"code":    "NOT_FOUND",
+			},
+		})
 		return
 	}
 
