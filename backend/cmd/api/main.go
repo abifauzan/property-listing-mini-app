@@ -7,6 +7,7 @@ import (
 
 	"github.com/abifauzan/property-listing-mini-app/backend/internal/config"
 	delivery "github.com/abifauzan/property-listing-mini-app/backend/internal/delivery/http"
+	"github.com/abifauzan/property-listing-mini-app/backend/internal/domain"
 	"github.com/abifauzan/property-listing-mini-app/backend/internal/middleware"
 	"github.com/abifauzan/property-listing-mini-app/backend/internal/repository"
 	"github.com/abifauzan/property-listing-mini-app/backend/internal/usecase"
@@ -22,11 +23,24 @@ func main() {
 
 	slog.Info("configuration loaded", "env", cfg.Env, "port", cfg.Port)
 
-	// Repository
-	repo, err := repository.NewJSONPropertyRepository(cfg.DataPath)
-	if err != nil {
-		slog.Error("failed to initialize repository", "error", err)
-		os.Exit(1)
+	// Repository - choose between PostgreSQL and JSON based on configuration
+	var repo domain.PropertyRepository
+	var err error
+
+	if usePostgres(cfg) {
+		slog.Info("initializing PostgreSQL repository")
+		repo, err = repository.NewPostgresPropertyRepository(cfg.Database.DSN())
+		if err != nil {
+			slog.Error("failed to initialize PostgreSQL repository", "error", err)
+			os.Exit(1)
+		}
+	} else {
+		slog.Info("initializing JSON repository", "data_path", cfg.DataPath)
+		repo, err = repository.NewJSONPropertyRepository(cfg.DataPath)
+		if err != nil {
+			slog.Error("failed to initialize JSON repository", "error", err)
+			os.Exit(1)
+		}
 	}
 
 	// Usecase
@@ -46,4 +60,20 @@ func main() {
 		slog.Error("server failed", "error", err)
 		os.Exit(1)
 	}
+}
+
+// usePostgres determines whether to use PostgreSQL repository based on configuration.
+// Returns true if DATABASE_URL is set or all database config variables are present.
+func usePostgres(cfg *config.Config) bool {
+	// Check if DATABASE_URL environment variable is set
+	if dbURL := os.Getenv("DATABASE_URL"); dbURL != "" {
+		return true
+	}
+
+	// Check if all required database config is available (non-default)
+	return cfg.Database.Host != "localhost" ||
+		cfg.Database.User != "postgres" ||
+		cfg.Database.Password != "password" ||
+		cfg.Database.DBName != "property_listing" ||
+		cfg.Database.Port != "5432"
 }

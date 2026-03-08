@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"strings"
@@ -13,6 +14,17 @@ type Config struct {
 	DataPath        string
 	CORSAllowOrigin string
 	LogLevel        slog.Level
+	Database        DatabaseConfig
+}
+
+// DatabaseConfig holds database connection configuration.
+type DatabaseConfig struct {
+	Host     string
+	Port     string
+	User     string
+	Password string
+	DBName   string
+	SSLMode  string
 }
 
 // Load reads configuration from environment variables with sensible defaults.
@@ -23,9 +35,23 @@ func Load() *Config {
 		DataPath:        getEnv("DATA_PATH", "data/properties.json"),
 		CORSAllowOrigin: getEnv("CORS_ALLOW_ORIGIN", "*"),
 		LogLevel:        parseLogLevel(getEnv("LOG_LEVEL", "info")),
+		Database: DatabaseConfig{
+			Host:     getEnv("DB_HOST", "localhost"),
+			Port:     getEnv("DB_PORT", "5432"),
+			User:     getEnv("DB_USER", "postgres"),
+			Password: getEnv("DB_PASSWORD", "password"),
+			DBName:   getEnv("DB_NAME", "property_listing"),
+			SSLMode:  getEnv("DB_SSLMODE", "disable"),
+		},
 	}
 
 	return cfg
+}
+
+// DSN returns the database connection string.
+func (db DatabaseConfig) DSN() string {
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		db.Host, db.Port, db.User, db.Password, db.DBName, db.SSLMode)
 }
 
 // getEnv retrieves an environment variable or returns a default value.

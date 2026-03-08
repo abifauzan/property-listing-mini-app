@@ -50,15 +50,39 @@ Domain Layer (entities)
 
 - **Go** 1.25.0 or higher
 - **Git** (for cloning)
+- **PostgreSQL** (optional, for database mode)
 
 ### Installation & Run
+
+#### Option 1: JSON File Mode (Default)
 
 ```bash
 # Navigate to backend directory
 cd backend
 
-# Run the server
+# Run the server with JSON data source
 go run cmd/api/main.go
+```
+
+#### Option 2: PostgreSQL Database Mode
+
+```bash
+# 1. Install PostgreSQL
+# On macOS with Homebrew:
+brew install postgresql
+brew services start postgresql
+
+# 2. Create database
+createdb property_listing
+
+# 3. Run migrations
+make migrate-up
+
+# 4. Seed database with existing JSON data
+make seed-db
+
+# 5. Run server with database
+DB_HOST=localhost DB_USER=postgres DB_PASSWORD=password go run cmd/api/main.go
 ```
 
 The server will start on **`http://localhost:8080`**
@@ -159,15 +183,32 @@ curl http://localhost:8080/api/v1/properties/x0zzhpyrox8ixdy75e2zpw1m
 |----------|---------|-------------|
 | `PORT` | `8080` | Server listen port |
 | `DATA_PATH` | `data/properties.json` | Path to JSON data file |
+| `DB_HOST` | `localhost` | PostgreSQL host |
+| `DB_PORT` | `5432` | PostgreSQL port |
+| `DB_USER` | `postgres` | PostgreSQL username |
+| `DB_PASSWORD` | `password` | PostgreSQL password |
+| `DB_NAME` | `property_listing` | PostgreSQL database name |
+| `DB_SSLMODE` | `disable` | PostgreSQL SSL mode |
+| `DATABASE_URL` | - | Full database URL (overrides individual DB vars) |
 
-**Example**:
+**Examples**:
 ```bash
 # Custom port
 PORT=3000 go run cmd/api/main.go
 
 # Custom data path
 DATA_PATH=/path/to/data.json go run cmd/api/main.go
+
+# Database mode
+DATABASE_URL=postgres://user:pass@host:5432/db go run cmd/api/main.go
+
+# Individual database variables
+DB_HOST=localhost DB_USER=postgres DB_PASSWORD=mypassword go run cmd/api/main.go
 ```
+
+**Repository Selection**: The application automatically chooses between JSON and PostgreSQL repositories:
+- Uses **PostgreSQL** if `DATABASE_URL` is set or database config differs from defaults
+- Uses **JSON** if database config is at default values
 
 ---
 
@@ -189,8 +230,9 @@ go tool cover -html=coverage.out
 
 ### Test Structure
 
-- **Repository Tests** (`internal/repository/json_repository_test.go`)
-  - Test JSON file loading
+- **Repository Tests** (`internal/repository/`)
+  - `json_repository_test.go` - Test JSON file loading
+  - `postgres_repository_test.go` - Test PostgreSQL operations
   - Test search functionality
   - Test property retrieval by ID
   
@@ -199,6 +241,20 @@ go tool cover -html=coverage.out
   - Mock repository for isolation
   - Test error handling
 
+### Database Testing
+
+PostgreSQL tests require a test database:
+```bash
+# Create test database
+createdb property_listing_test
+
+# Run tests with database
+SKIP_DB_TESTS= go test ./... -v
+
+# Skip database tests
+SKIP_DB_TESTS=1 go test ./... -v
+```
+
 ---
 
 ## 📂 Project Structure
@@ -206,14 +262,22 @@ go tool cover -html=coverage.out
 ```
 backend/
 ├── cmd/
-│   └── api/
-│       └── main.go                       # Application entry point
+│   ├── api/
+│   │   └── main.go                       # Application entry point
+│   └── migrate/
+│       └── main.go                       # Database migration tool
 ├── internal/
+│   ├── config/
+│   │   └── config.go                     # Configuration management
 │   ├── domain/
 │   │   └── property.go                  # Entity & repository interface
+│   ├── migrate/
+│   │   └── migrate.go                    # Migration utilities
 │   ├── repository/
 │   │   ├── json_repository.go           # JSON file implementation
-│   │   └── json_repository_test.go      # Repository tests
+│   │   ├── postgres_repository.go       # PostgreSQL implementation
+│   │   ├── json_repository_test.go      # JSON repository tests
+│   │   └── postgres_repository_test.go   # PostgreSQL repository tests
 │   ├── usecase/
 │   │   ├── property_usecase.go          # Business logic
 │   │   └── property_usecase_test.go     # Use case tests
@@ -223,11 +287,19 @@ backend/
 │   │       └── property_handler_test.go # Handler tests
 │   └── middleware/
 │       └── middleware.go                # CORS & logging middleware
+├── migrations/                          # Database migration files
+│   ├── 000001_create_properties_table.up.sql
+│   ├── 000001_create_properties_table.down.sql
+│   ├── 000002_create_images_table.up.sql
+│   ├── 000002_create_images_table.down.sql
+│   ├── 000003_create_facilities_table.up.sql
+│   └── 000003_create_facilities_table.down.sql
 ├── data/
 │   └── properties.json                  # Property data source
 ├── docs/
 │   ├── README.md                        # API documentation
 │   └── api-spec.yaml                    # OpenAPI 3.0 spec
+├── Makefile                             # Build & migration commands
 ├── go.mod                               # Go module definition
 └── README.md                            # This file
 ```
@@ -240,12 +312,15 @@ backend/
 |-----------|-----------|---------|
 | Language | Go 1.25.0 | Backend implementation |
 | HTTP Server | `net/http` (stdlib) | HTTP server & routing |
+| Database | PostgreSQL (optional) | Persistent data storage |
+| Database Driver | `pgx/v5` | PostgreSQL connection |
+| Migrations | `golang-migrate/migrate` | Database schema management |
 | Logging | `log/slog` (stdlib) | Structured JSON logging |
-| Data Storage | JSON file | Mock database |
+| Data Storage | JSON file | Fallback/mock database |
 | Testing | `testing` (stdlib) | Unit & integration tests |
 | Architecture | Clean Architecture | Maintainable, testable code |
 
-**No External Dependencies**: This project uses only Go's standard library for maximum simplicity and reliability.
+**Dependencies**: Minimal external dependencies for maximum reliability. PostgreSQL is optional - the application works perfectly with JSON files.
 
 ---
 
@@ -342,9 +417,47 @@ Edit `internal/middleware/cors.go` and modify allowed origins.
 
 ---
 
+## 🔄 Database Management
+
+### Make Commands
+
+```bash
+# Database migrations
+make migrate-up    # Run all migrations
+make migrate-down  # Rollback all migrations
+make seed-db       # Seed database with JSON data
+
+# Application
+make run          # Run in development mode
+make run-dev      # Run in development mode
+make run-staging  # Run in staging mode
+make run-prod     # Run in production mode
+make help         # Show all commands
+```
+
+### Database Schema
+
+The PostgreSQL implementation uses three tables:
+
+1. **properties** - Main property data
+2. **property_images** - Property gallery images (one-to-many)
+3. **property_facilities** - Property facility tags (many-to-many)
+
+All tables are properly indexed for performance and include foreign key constraints.
+
+### Migration Files
+
+Migration files are located in the `migrations/` directory:
+- `*.up.sql` - Apply migration
+- `*.down.sql` - Rollback migration
+
+Migrations are tracked in the `schema_migrations` table.
+
+---
+
 ## 🔄 Future Enhancements
 
-- [ ] Database integration (PostgreSQL/MongoDB)
+- [x] ~~Database integration (PostgreSQL/MongoDB)~~ ✅ **COMPLETED**
 - [ ] Authentication & authorization (JWT)
 - [ ] Pagination support
 - [ ] Advanced filtering (price range, facilities)
